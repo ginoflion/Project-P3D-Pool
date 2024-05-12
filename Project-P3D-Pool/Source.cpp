@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
+#include "objLoader.h"
+
 void init(void);
 
 #define WIDTH 800
