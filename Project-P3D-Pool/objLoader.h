@@ -8,6 +8,7 @@
 
 #include <Windows.h>
 #include <gl\GL.h>
+#include <GL\glew.h>
 
 #include <GLFW\glfw3.h>
 
@@ -15,7 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
-#include "stb_image.h"
 
 struct Vertex {
     float x, y, z;
