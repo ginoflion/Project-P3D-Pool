@@ -169,11 +169,6 @@ int main(void) {
 		return -1;
 	}
 
-
-
-
-
-
 	glfwMakeContextCurrent(window);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -183,8 +178,13 @@ int main(void) {
 
 	glfwSetCursorPosCallback(window, mouse_callback);
 
+
+	loadOBJ("Ball1.obj");
+	loadVertexGPU();
+
 	// Projection
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.f);
+
 
 	while (!glfwWindowShouldClose(window)) {
 		// View

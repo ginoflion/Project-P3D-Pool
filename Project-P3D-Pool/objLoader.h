@@ -38,3 +38,6 @@ struct Face {
 
 
 void loadOBJ(const std::string& filename);
+void loadVertexGPU();
+void loadMTL(const std::string& filename);
+void loadTexture(const std::string& filename);

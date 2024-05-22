@@ -49,7 +49,6 @@ void loadVertexGPU() {
     glBufferData(GL_ARRAY_BUFFER, faces.size() * sizeof(glm::vec3), faces.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-
     glBindVertexArray(0);
 }
 
@@ -149,7 +148,7 @@ void loadMTL(const std::string& filename) {
         else if (prefix == "map_Kd") {
             std::string textureFilename;
             iss >> textureFilename;
-            loadTexture(textureFilename);
+            //loadTexture(textureFilename);
         }
     }
 }
