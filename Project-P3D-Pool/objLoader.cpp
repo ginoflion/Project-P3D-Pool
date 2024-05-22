@@ -4,17 +4,20 @@
 #include <sstream>
 #include <vector>
 
+#include <Windows.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #define GLEW_STATIC
-#include <GL\glew.h>
-
-#include <gl\GL.h>
-
+#include <GL/glew.h>
+#include <gl/GL.h>
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
 #include "objLoader.h"
+
+
 
 std::vector<Vertex> vertices;
 std::vector<TextureCoord> texCoords;
@@ -55,7 +58,7 @@ void loadVertexGPU() {
 void loadOBJ(const std::string& filename) {
     std::ifstream file(filename);
     if (!file) {
-        std::cerr << "Cannot open MTL file: " << filename << std::endl;
+        std::cerr << "Cannot open OBJ file: " << filename << std::endl;
         exit(EXIT_FAILURE);
     }
 

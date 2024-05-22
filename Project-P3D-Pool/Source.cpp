@@ -1,5 +1,6 @@
 ﻿#pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glew32s.lib")
 
 #include <iostream>
 #include <vector>
@@ -7,8 +8,8 @@
 #include <Windows.h>
 
 #include <GL/glew.h>
-#include <gl\GL.h>
-#include <GLFW\glfw3.h>
+#include <gl/GL.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -179,7 +180,7 @@ int main(void) {
 	glfwSetCursorPosCallback(window, mouse_callback);
 
 
-	loadOBJ("Ball1.obj");
+	loadOBJ("PoolBalls/Ball1");
 	loadVertexGPU();
 
 	// Projection
