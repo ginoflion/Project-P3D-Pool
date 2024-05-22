@@ -14,8 +14,6 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
-#include "stb_image.h"
-
 #include "objLoader.h"
 
 std::vector<Vertex> vertices;
@@ -57,6 +55,11 @@ void loadVertexGPU() {
 
 void loadOBJ(const std::string& filename) {
     std::ifstream file(filename);
+    if (!file) {
+        std::cerr << "Cannot open MTL file: " << filename << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     std::string line;
     while (std::getline(file, line)) {
         std::istringstream iss(line);
@@ -101,8 +104,6 @@ void loadOBJ(const std::string& filename) {
             iss >> mtlFilename;
             loadMTL(mtlFilename);
         }
-
-
     }
     std::vector<Vertex> orderedVertices;
     for (const auto& face : faces) {
@@ -118,14 +119,37 @@ void loadOBJ(const std::string& filename) {
 void loadMTL(const std::string& filename) {
     std::ifstream file(filename);
     std::string line;
+
+    if (!file) {
+        std::cerr << "Cannot open MTL file: " << filename << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
     while (std::getline(file, line)) {
         std::istringstream iss(line);
         std::string prefix;
         iss >> prefix;
-        if (prefix == "map_Kd") { // Esta é a linha que indica a textura difusa (albedo)
+
+        if (prefix == "Ka") {
+            glm::vec3 ambientColor;
+            iss >> ambientColor.r >> ambientColor.g >> ambientColor.b;
+        }
+        else if (prefix == "Kd") {
+            glm::vec3 diffuseColor;
+			iss >> diffuseColor.r >> diffuseColor.g >> diffuseColor.b;
+        }
+        else if (prefix == "Ks") {
+			glm::vec3 specularColor;
+            iss >> specularColor.r >> specularColor.g >> specularColor.b;
+		}
+        else if (prefix == "Ns") {
+            float shininess;
+			iss >> shininess;
+		}
+        else if (prefix == "map_Kd") {
             std::string textureFilename;
             iss >> textureFilename;
-            loadTexture(textureFilename); // Chamada para carregar a textura
+            loadTexture(textureFilename);
         }
     }
 }

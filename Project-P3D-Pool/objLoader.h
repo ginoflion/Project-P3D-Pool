@@ -16,6 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
+#include "stb_image.h"
 
 struct Vertex {
     float x, y, z;
@@ -34,5 +35,6 @@ struct Face {
     int textureIndex[3];
     int normalIndex[3];
 };
+
 
 void loadOBJ(const std::string& filename);
