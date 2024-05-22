@@ -56,7 +56,7 @@ void loadVertexGPU() {
 }
 
 void loadOBJ(const std::string& filename) {
-    std::ifstream file(filename);
+    std::ifstream file(filename + ".obj");
     if (!file) {
         std::cerr << "Cannot open OBJ file: " << filename << std::endl;
         exit(EXIT_FAILURE);
@@ -104,7 +104,7 @@ void loadOBJ(const std::string& filename) {
         }
         else if (prefix == "mtllib") {
             iss >> mtlFilename;
-            loadMTL(mtlFilename);
+            loadMTL("PoolBalls/" + mtlFilename);
         }
     }
     std::vector<Vertex> orderedVertices;
