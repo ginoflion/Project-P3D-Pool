@@ -171,6 +171,10 @@ int main(void) {
 	}
 
 	glfwMakeContextCurrent(window);
+	if (glewInit() != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW" << std::endl;
+        return -1;
+    }
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	init();
