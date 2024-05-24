@@ -37,6 +37,7 @@ namespace objLoader {
         };
 
 
+    
         
     public:
 
@@ -49,7 +50,7 @@ namespace objLoader {
         void loadVertexGPU();
         void loadMTL(const std::string& filename);
         void loadTexture(const std::string& filename);
-        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model);
+        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLuint shaderProgram);
 
     };
 }

@@ -229,8 +229,7 @@ int main(void) {
 	//Matriz ZOOM
 	glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
-	ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
-
+	ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model,Shader);
 
 	while (!glfwWindowShouldClose(window)) {
 		// View

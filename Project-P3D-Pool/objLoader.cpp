@@ -53,6 +53,7 @@ namespace objLoader {
     }
 
     void Ball:: loadOBJ(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
+
         std::ifstream file(filename + ".obj");
         if (!file) {
             std::cerr << "Cannot open OBJ file: " << filename << std::endl;
@@ -158,9 +159,10 @@ namespace objLoader {
     void Ball:: loadTexture(const std::string& filename) {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
-
+        stbi_set_flip_vertically_on_load(true);
         int width, height, nrChannels;
-        unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+        std::cout << filename;
+        unsigned char* data = stbi_load(("PoolBalls/"+filename).c_str(), &width, &height, &nrChannels, 0);
         if (data) {
             GLenum format;
             if (nrChannels == 1)
@@ -185,10 +187,11 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    GLuint ShaderProgram;
+    GLuint ShaderProgram ;
 
-    void Ball:: Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model) {
+    void Ball:: Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLuint shaderProgram){
 
+        ShaderProgram = shaderProgram;
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
@@ -233,7 +236,7 @@ namespace objLoader {
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     }
 
-
+  
 }
 
 
