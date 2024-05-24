@@ -128,10 +128,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="shaderLoader.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="objLoader.h" />
+    <ClInclude Include="shaderLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ball.frag" />
+    <None Include="ball.vert" />
+    <None Include="table.frag" />
+    <None Include="table.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

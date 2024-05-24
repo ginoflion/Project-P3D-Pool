@@ -18,6 +18,7 @@
 #include "stb_image.h"
 
 #include "objLoader.h"
+#include "shaderLoader.h"
 
 void init(void);
 
@@ -34,6 +35,31 @@ bool firstMouse = true;
 float yaw = -90.0f; // yaw é inicializado para -90 graus para que a primeira pessoa olhe para o centro
 float pitch = 0.0f;
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+
+
+//ballpositions
+glm::vec3 BallPositions[] = {
+	glm::vec3(-0.5f, 0.1f, 0.2f),
+	glm::vec3(-0.4f, 0.1f, 0.1f),
+	glm::vec3(-0.2f, 0.1f, -0.3f),
+	glm::vec3(-0.1f, 0.1f, 0.4f),
+	glm::vec3(-0.8f, 0.1f, 0.3f),
+	glm::vec3(-0.7f, 0.1f, -0.1f),
+	glm::vec3(-0.6f, 0.1f, 0.35f),
+	glm::vec3(0.7f, 0.1f, -0.35f),
+	glm::vec3(0.2f, 0.1f, 0.2f),
+	glm::vec3(0.1f, 0.1f, 0.0f),
+	glm::vec3(0.3f, 0.1f, -0.2f),
+	glm::vec3(0.4f, 0.1f, 0.1f),
+	glm::vec3(0.5f, 0.1f, -0.15f),
+	glm::vec3(0.6f, 0.1f, 0.25f),
+	glm::vec3(0.8f, 0.1f, -0.25f)
+};
+
+
+//matrizes de modelação e projeção
+glm::mat4 model(1.0f);
+glm::mat4 proj(1.0f);
 
 // Função de callback para o movimento do mouse
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -183,12 +209,27 @@ int main(void) {
 
 	glfwSetCursorPosCallback(window, mouse_callback);
 
+	ShaderInfo shaders[] = {
+	{ GL_VERTEX_SHADER, "ball.vert" }, // Shader de vértice
+	{ GL_FRAGMENT_SHADER, "ball.frag" }, // Shader de fragmento
+	{ GL_NONE, NULL } // Marcação de fim do array
+	};
+	GLuint Shader = LoadShaders(shaders);
 
-	loadOBJ("PoolBalls/Ball1");
-	loadVertexGPU();
+	
+	objLoader::Ball ball1;
+	ball1.loadOBJ("PoolBalls/Ball1", 1, Shader);
+	ball1.loadVertexGPU();
+
+	//Matriz visualização
+	glm::mat4 view = glm::mat4(1.0f);
 
 	// Projection
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.f);
+	//Matriz ZOOM
+	glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
+
+	ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
 
 
 	while (!glfwWindowShouldClose(window)) {

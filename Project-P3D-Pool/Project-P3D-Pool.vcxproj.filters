@@ -21,10 +21,30 @@
     <ClCompile Include="objLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shaderLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="objLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shaderLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ball.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="ball.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="table.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="table.vert">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -16,26 +16,41 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
-struct Vertex {
-    float x, y, z;
-};
+namespace objLoader {
+    class Ball {
+        struct Vertex {
+            float x, y, z;
+        };
 
-struct TextureCoord {
-    float u, v;
-};
+        struct TextureCoord {
+            float u, v;
+        };
 
-struct Normal {
-    float x, y, z;
-};
+        struct Normal {
+            float x, y, z;
+        };
 
-struct Face {
-    int vertexIndex[3];
-    int textureIndex[3];
-    int normalIndex[3];
-};
+        struct Face {
+            int vertexIndex[3];
+            int textureIndex[3];
+            int normalIndex[3];
+        };
 
 
-void loadOBJ(const std::string& filename);
-void loadVertexGPU();
-void loadMTL(const std::string& filename);
-void loadTexture(const std::string& filename);
+        
+    public:
+
+        std::vector<Vertex> vertices;
+        std::vector<TextureCoord> texCoords;
+        std::vector<Normal> normals;
+        std::vector<Face> faces;
+
+        void loadOBJ(const std::string& filename, GLuint textureIndex, GLuint shaderprogram);
+        void loadVertexGPU();
+        void loadMTL(const std::string& filename);
+        void loadTexture(const std::string& filename);
+        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model);
+
+    };
+}
+
