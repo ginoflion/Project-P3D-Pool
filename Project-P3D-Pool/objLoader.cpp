@@ -170,11 +170,11 @@ namespace objLoader {
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
-        Model = glm::scale(Model, scale);  // Apply scaling transformation first
-        Model = glm::translate(Model, position);  // Apply translation
-        Model = glm::rotate(Model, glm::radians(orientation.x), glm::vec3(1.0f, 0.0f, 0.0f));  // Apply rotation around x-axis
-        Model = glm::rotate(Model, glm::radians(orientation.y), glm::vec3(0.0f, 1.0f, 0.0f));  // Apply rotation around y-axis
-        Model = glm::rotate(Model, glm::radians(orientation.z), glm::vec3(0.0f, 0.0f, 1.0f));  // Apply rotation around z-axis
+        Model = glm::translate(Model, position);
+        Model = glm::rotate(Model, glm::radians(orientation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        Model = glm::rotate(Model, glm::radians(orientation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        Model = glm::rotate(Model, glm::radians(orientation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        Model = glm::scale(Model, scale); // Aplica a transformação de escala
 
         GLint viewId = glGetUniformLocation(ShaderProgram, "View");
         glUniformMatrix4fv(viewId, 1, GL_FALSE, glm::value_ptr(view));

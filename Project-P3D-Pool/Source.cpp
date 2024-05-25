@@ -25,28 +25,27 @@ GLfloat ZOOM = 10.0f;
 
 //Variável para controlar a rotação da bola durante a animação
 float currentBallRotation = 0.0f;
-glm::vec3 scale(0.045f, 0.045f, 0.045f);
 
 //Variaveis para criação de VAO,VBO,EBO
 GLuint VAO, VBO, EBO;
 
 //Posições das bolas de bilhar
 glm::vec3 BallPositions[] = {
-	glm::vec3(-0.5f, 2.0f, 0.2f),
-	glm::vec3(-0.4f, 2.0f, 0.1f),
-	glm::vec3(-0.2f, 2.0f, -0.3f),
-	glm::vec3(-0.1f, 2.0f, 0.4f),
-	glm::vec3(-0.8f, 2.0f, 0.3f),
-	glm::vec3(-0.7f, 2.0f, -0.1f),
-	glm::vec3(-0.6f, 2.0f, 0.35f),
-	glm::vec3(0.7f, 2.0f, -0.35f),
-	glm::vec3(0.2f, 2.0f, 0.2f),
-	glm::vec3(0.1f, 2.0f, 0.0f),
-	glm::vec3(0.3f, 2.0f, -0.2f),
-	glm::vec3(0.4f, 2.0f, 0.1f),
-	glm::vec3(0.5f, 2.0f, -0.15f),
-	glm::vec3(0.6f, 2.0f, 0.25f),
-	glm::vec3(0.8f, 2.0f, -0.25f)
+	glm::vec3(-0.5f, 0.1f, 0.2f),
+	glm::vec3(-0.4f, 0.1f, 0.1f),
+	glm::vec3(-0.2f, 0.1f, -0.3f),
+	glm::vec3(-0.1f, 0.1f, 0.4f),
+	glm::vec3(-0.8f, 0.1f, 0.3f),
+	glm::vec3(-0.7f, 0.1f, -0.1f),
+	glm::vec3(-0.6f, 0.1f, 0.35f),
+	glm::vec3(0.7f, 0.1f, -0.35f),
+	glm::vec3(0.2f, 0.1f, 0.2f),
+	glm::vec3(0.1f, 0.1f, 0.0f),
+	glm::vec3(0.3f, 0.1f, -0.2f),
+	glm::vec3(0.4f, 0.1f, 0.1f),
+	glm::vec3(0.5f, 0.1f, -0.15f),
+	glm::vec3(0.6f, 0.1f, 0.25f),
+	glm::vec3(0.8f, 0.1f, -0.25f)
 };
 
 //variaveis para controlar a rotação do objeto
@@ -478,6 +477,9 @@ int main(void) {
 		ball13.Draw(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
 		ball14.Draw(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
 		ball15.Draw(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+
+		//Desenhar a mesa
+		drawTable(tableProgram, matrizZoom, projection, view);
 
 		glfwSwapBuffers(window);
 
