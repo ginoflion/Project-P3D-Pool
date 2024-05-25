@@ -30,11 +30,7 @@ namespace objLoader {
             float x, y, z;
         };
 
-        struct Face {
-            int vertexIndex[3];
-            int textureIndex[3];
-            int normalIndex[3];
-        };
+        
 
 
     private: 
@@ -47,7 +43,6 @@ namespace objLoader {
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> texCoords;
         std::vector<Normal> normals;
-        std::vector<Face> faces;
 
         void Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram);
         void Send();

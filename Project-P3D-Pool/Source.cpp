@@ -238,7 +238,7 @@ int main(void) {
 		glUseProgram(shaderProgram);
 
 		//Desenhar as bolas
-		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, -currentBallRotation), view * matrizZoom, projection, model);
+		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
 
 
 

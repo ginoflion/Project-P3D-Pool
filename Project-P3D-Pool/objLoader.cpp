@@ -28,10 +28,9 @@ namespace objLoader {
 
     
 
-    void Ball:: Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
+    void Ball::Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
         this->ShaderProgram = shaderprogram;
         this->textureIndex = textureIndex;
-
 
         std::ifstream file(filename + ".obj");
         if (!file) {
@@ -40,6 +39,10 @@ namespace objLoader {
         }
 
         std::string line;
+        std::vector<Vertex> temp_vertices;
+        std::vector<TextureCoord> temp_texCoords;
+        std::vector<Normal> temp_normals;
+
         while (std::getline(file, line)) {
             std::istringstream iss(line);
             std::string prefix;
@@ -47,92 +50,66 @@ namespace objLoader {
             if (prefix == "v") {
                 Vertex vertex;
                 iss >> vertex.x >> vertex.y >> vertex.z;
-                vertices.push_back(vertex);
+                temp_vertices.push_back(vertex);
             }
             else if (prefix == "vt") {
                 TextureCoord texCoord;
                 iss >> texCoord.u >> texCoord.v;
-                texCoords.push_back(texCoord);
+                temp_texCoords.push_back(texCoord);
             }
             else if (prefix == "vn") {
                 Normal normal;
                 iss >> normal.x >> normal.y >> normal.z;
-                normals.push_back(normal);
+                temp_normals.push_back(normal);
             }
             else if (prefix == "f") {
-                Face face;
+                unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+                char slash;
+
                 for (int i = 0; i < 3; ++i) {
-                    std::string vertexData;
-                    iss >> vertexData;
-                    std::istringstream viss(vertexData);
-                    viss >> face.vertexIndex[i];
-                    if (viss.peek() == '/') {
-                        viss.ignore(); // skip '/'
-                        if (viss.peek() != '/') {
-                            viss >> face.textureIndex[i];
-                        }
-                        if (viss.peek() == '/') {
-                            viss.ignore(); // skip '/'
-                            viss >> face.normalIndex[i];
-                        }
-                    }
+                    iss >> vertexIndex[i] >> slash >> uvIndex[i] >> slash >> normalIndex[i];
+                    vertices.push_back(temp_vertices.at(vertexIndex[i] - 1));
+                    texCoords.push_back(temp_texCoords.at(uvIndex[i] - 1));
+                    normals.push_back(temp_normals.at(normalIndex[i] - 1));
                 }
-                faces.push_back(face);
             }
             else if (prefix == "mtllib") {
+                std::string mtlFilename;
                 iss >> mtlFilename;
                 ReadMTL("PoolBalls/" + mtlFilename);
             }
         }
-        std::vector<Vertex> orderedVertices;
-        for (const auto& face : faces) {
-            for (int i = 0; i < 3; ++i) {
-                int vertexIndex = face.vertexIndex[i] - 1; // Os índices em .obj começam de 1
-                orderedVertices.push_back(vertices[vertexIndex]);
-            }
-        }
-
-
     }
+
+
 
     void Ball::Send() {
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
 
-    glGenBuffers(1, &VBOvertices);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOvertices);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 
-    glGenBuffers(1, &VBOtexCoords);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOtexCoords);
-    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(glm::vec2), texCoords.data(), GL_STATIC_DRAW); // Change glm::vec3 to glm::vec2
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Change 3 to 2
-    glEnableVertexAttribArray(1);
+        glGenBuffers(1, &VBOvertices);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOvertices);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
 
-    glGenBuffers(1, &VBOnormals);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOnormals);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(2);
+        glGenBuffers(1, &VBOtexCoords);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOtexCoords);
+        glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(glm::vec3), texCoords.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
 
-    glGenBuffers(1, &VBOfaces);
-    glBindBuffer(GL_ARRAY_BUFFER, VBOfaces);
-    glBufferData(GL_ARRAY_BUFFER, faces.size() * sizeof(glm::vec3), faces.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(3);
+        glGenBuffers(1, &VBOnormals);
+        glBindBuffer(GL_ARRAY_BUFFER, VBOnormals);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(2);
 
-    GLint textura = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "textSampler");
-    glProgramUniform1i(ShaderProgram, textura, 0);
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR) {
-        std::cout << "OpenGL Error: " << error << std::endl;
+       
+
+        glBindVertexArray(0);
     }
-
-    glBindVertexArray(0);
-}
-
 
     void Ball:: ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
@@ -167,7 +144,7 @@ namespace objLoader {
             else if (prefix == "map_Kd") {
                 std::string textureFilename;
                 iss >> textureFilename;
-                LoadTexture(textureFilename);
+                LoadTexture("PoolBalls/"+textureFilename);
             }
         }
     }
@@ -179,7 +156,7 @@ namespace objLoader {
         stbi_set_flip_vertically_on_load(true);
         int width, height, nrChannels;
         std::cout << filename;
-        unsigned char* data = stbi_load(("PoolBalls/"+filename).c_str(), &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load((filename).c_str(), &width, &height, &nrChannels, 0);
         if (data) {
             GLenum format;
             if (nrChannels == 1)
@@ -190,7 +167,6 @@ namespace objLoader {
                 format = GL_RGBA;
 
             glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
         }
         else {
             std::cout << "Failed to load texture" << std::endl;
@@ -200,7 +176,7 @@ namespace objLoader {
         // Configurações de filtro e wrap da textura
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
@@ -240,10 +216,7 @@ namespace objLoader {
         GLint normalMatrixId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "NormalMatrix");
         glProgramUniformMatrix4fv(ShaderProgram, normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
-        GLenum error = glGetError();
-        if (error != GL_NO_ERROR) {
-            std::cout << "OpenGL Error: " << error << std::endl;
-        }
+        
 
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.emissive"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(1.5, 1.5, 1.5)));
