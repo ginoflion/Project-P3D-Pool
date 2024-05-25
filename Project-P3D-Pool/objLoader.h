@@ -48,7 +48,7 @@ namespace objLoader {
         void Send();
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
-        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model);
+        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale);
 
     };
 }

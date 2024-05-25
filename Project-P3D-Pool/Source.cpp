@@ -198,8 +198,61 @@ int main(void) {
 	ball1.Send();
 
 	objLoader::Ball ball2;
-	ball1.Read("PoolBalls/Ball2", 2, shaderProgram);
-	ball1.Send();
+	ball2.Read("PoolBalls/Ball2", 2, shaderProgram);
+	ball2.Send();
+
+	objLoader::Ball ball3;
+	ball3.Read("PoolBalls/Ball3", 3, shaderProgram);
+	ball3.Send();
+
+	objLoader::Ball ball4;
+	ball4.Read("PoolBalls/Ball4", 4, shaderProgram);
+	ball4.Send();
+
+	objLoader::Ball ball5;
+	ball5.Read("PoolBalls/Ball5", 5, shaderProgram);
+	ball5.Send();
+
+	objLoader::Ball ball6;
+	ball6.Read("PoolBalls/Ball6", 6, shaderProgram);
+	ball6.Send();
+
+	objLoader::Ball ball7;
+	ball7.Read("PoolBalls/Ball7", 7, shaderProgram);
+	ball7.Send();
+
+	objLoader::Ball ball8;
+	ball8.Read("PoolBalls/Ball8", 8, shaderProgram);
+	ball8.Send();
+
+	objLoader::Ball ball9;
+	ball9.Read("PoolBalls/Ball9", 9, shaderProgram);
+	ball9.Send();
+
+	objLoader::Ball ball10;
+	ball10.Read("PoolBalls/Ball10", 10, shaderProgram);
+	ball10.Send();
+
+	objLoader::Ball ball11;
+	ball11.Read("PoolBalls/Ball11",11, shaderProgram);
+	ball11.Send();
+
+	objLoader::Ball ball12;
+	ball12.Read("PoolBalls/Ball12", 12, shaderProgram);
+	ball12.Send();
+
+	objLoader::Ball ball13;
+	ball13.Read("PoolBalls/Ball13", 13, shaderProgram);
+	ball13.Send();
+
+	objLoader::Ball ball14;
+	ball14.Read("PoolBalls/Ball14", 14, shaderProgram);
+	ball14.Send();
+
+	objLoader::Ball ball15;
+	ball15.Read("PoolBalls/Ball15", 15, shaderProgram);
+	ball15.Send();
+
 
 
 	//Matriz projeção
@@ -224,35 +277,49 @@ int main(void) {
 	view = glm::lookAt(position, target, up);
 
 
+	// Define a escala que você quer aplicar às bolas
+	glm::vec3 scale(0.05f, 0.05f, 0.05f); // Reduz o tamanho das bolas para 10% do tamanho original
+
 	while (!glfwWindowShouldClose(window)) {
 
-		//Define a cor de fundo para o framebuffer,
+		// Define a cor de fundo para o framebuffer,
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 
-		//Limpar buffer de cor e profundidade
+		// Limpar buffer de cor e profundidade
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Matriz ZOOM
+		// Matriz ZOOM
 		glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
-		//Bind the vao so OPengl knows to use it
+		// Bind the vao so OPengl knows to use it
 		glBindVertexArray(VAO);
 
-
-		//Dizer que programa usar (usamos o programa das bolas)
+		// Dizer que programa usar (usamos o programa das bolas)
 		glUseProgram(shaderProgram);
 
-		//Desenhar as bolas
-		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
-		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
-
+		// Desenhar as bolas com a escala definida
+		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball3.Draw(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball4.Draw(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball5.Draw(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball6.Draw(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball7.Draw(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball8.Draw(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball9.Draw(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball10.Draw(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball11.Draw(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball12.Draw(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball13.Draw(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball14.Draw(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball15.Draw(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
 
 		glfwSwapBuffers(window);
 
-		//Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta
+		// Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta
 		glfwPollEvents();
-
 	}
+
 
 	//Apaga o VAO,VBO,EBO e o programa shader
 	glDeleteVertexArrays(1, &VAO);

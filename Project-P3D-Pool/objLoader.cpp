@@ -166,7 +166,7 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    void Ball::Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model) {
+    void Ball::Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
@@ -174,6 +174,7 @@ namespace objLoader {
         Model = glm::rotate(Model, glm::radians(orientation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        Model = glm::scale(Model, scale); // Aplica a transformação de escala
 
         GLint viewId = glGetUniformLocation(ShaderProgram, "View");
         glUniformMatrix4fv(viewId, 1, GL_FALSE, glm::value_ptr(view));
@@ -192,4 +193,5 @@ namespace objLoader {
 
         glBindVertexArray(0);
     }
+
 }
