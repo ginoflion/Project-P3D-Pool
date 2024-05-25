@@ -197,6 +197,11 @@ int main(void) {
 	ball1.Read("PoolBalls/Ball1", 1, shaderProgram);
 	ball1.Send();
 
+	objLoader::Ball ball2;
+	ball1.Read("PoolBalls/Ball2", 2, shaderProgram);
+	ball1.Send();
+
+
 	//Matriz projeção
 	glm::mat4 projection = glm::mat4(1.0f);
 
@@ -239,7 +244,7 @@ int main(void) {
 
 		//Desenhar as bolas
 		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
-
+		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
 
 
 		glfwSwapBuffers(window);
