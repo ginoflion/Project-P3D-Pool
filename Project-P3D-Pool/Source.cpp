@@ -190,6 +190,7 @@ int main(void) {
 
 	if (!glfwInit()) return -1;
 
+
 	window = glfwCreateWindow(WIDTH, HEIGHT, "P3D - Trabalho Pratico 1 (Part #1)", NULL, NULL);
 	if (window == NULL) {
 		glfwTerminate();
@@ -210,14 +211,32 @@ int main(void) {
 	glfwSetCursorPosCallback(window, mouse_callback);
 
 	ShaderInfo shaders[] = {
-	{ GL_VERTEX_SHADER, "ball.vert" }, // Shader de vértice
-	{ GL_FRAGMENT_SHADER, "ball.frag" }, // Shader de fragmento
+	{ GL_VERTEX_SHADER, "Shaders/ball.vert" }, // Shader de vértice
+	{ GL_FRAGMENT_SHADER, "Shaders/ball.frag" }, // Shader de fragmento
 	{ GL_NONE, NULL } // Marcação de fim do array
 	};
 	GLuint Shader = LoadShaders(shaders);
+	if (!Shader)
+		exit(EXIT_FAILURE);
 
-	
+	//glUseProgram(Shader);
+
 	objLoader::Ball ball1;
+	objLoader::Ball ball2;
+	objLoader::Ball ball3;
+	objLoader::Ball ball4;
+	objLoader::Ball ball5;
+	objLoader::Ball ball6;
+	objLoader::Ball ball7;
+	objLoader::Ball ball8;
+	objLoader::Ball ball9;
+	objLoader::Ball ball10;
+	objLoader::Ball ball11;
+	objLoader::Ball ball12;
+	objLoader::Ball ball13;
+	objLoader::Ball ball14;
+	objLoader::Ball ball15;
+
 	ball1.loadOBJ("PoolBalls/Ball1", 1, Shader);
 	ball1.loadVertexGPU();
 
