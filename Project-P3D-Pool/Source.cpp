@@ -25,27 +25,28 @@ GLfloat ZOOM = 10.0f;
 
 //Variável para controlar a rotação da bola durante a animação
 float currentBallRotation = 0.0f;
+glm::vec3 scale(0.045f, 0.045f, 0.045f);
 
 //Variaveis para criação de VAO,VBO,EBO
 GLuint VAO, VBO, EBO;
 
 //Posições das bolas de bilhar
 glm::vec3 BallPositions[] = {
-	glm::vec3(-0.5f, 0.1f, 0.2f),
-	glm::vec3(-0.4f, 0.1f, 0.1f),
-	glm::vec3(-0.2f, 0.1f, -0.3f),
-	glm::vec3(-0.1f, 0.1f, 0.4f),
-	glm::vec3(-0.8f, 0.1f, 0.3f),
-	glm::vec3(-0.7f, 0.1f, -0.1f),
-	glm::vec3(-0.6f, 0.1f, 0.35f),
-	glm::vec3(0.7f, 0.1f, -0.35f),
-	glm::vec3(0.2f, 0.1f, 0.2f),
-	glm::vec3(0.1f, 0.1f, 0.0f),
-	glm::vec3(0.3f, 0.1f, -0.2f),
-	glm::vec3(0.4f, 0.1f, 0.1f),
-	glm::vec3(0.5f, 0.1f, -0.15f),
-	glm::vec3(0.6f, 0.1f, 0.25f),
-	glm::vec3(0.8f, 0.1f, -0.25f)
+	glm::vec3(-0.5f, 2.0f, 0.2f),
+	glm::vec3(-0.4f, 2.0f, 0.1f),
+	glm::vec3(-0.2f, 2.0f, -0.3f),
+	glm::vec3(-0.1f, 2.0f, 0.4f),
+	glm::vec3(-0.8f, 2.0f, 0.3f),
+	glm::vec3(-0.7f, 2.0f, -0.1f),
+	glm::vec3(-0.6f, 2.0f, 0.35f),
+	glm::vec3(0.7f, 2.0f, -0.35f),
+	glm::vec3(0.2f, 2.0f, 0.2f),
+	glm::vec3(0.1f, 2.0f, 0.0f),
+	glm::vec3(0.3f, 2.0f, -0.2f),
+	glm::vec3(0.4f, 2.0f, 0.1f),
+	glm::vec3(0.5f, 2.0f, -0.15f),
+	glm::vec3(0.6f, 2.0f, 0.25f),
+	glm::vec3(0.8f, 2.0f, -0.25f)
 };
 
 //variaveis para controlar a rotação do objeto
@@ -122,7 +123,159 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 
 }
 
+//Funcao para desenhar a mesa
+void drawTable(GLuint tableProgram, glm::mat4 matrizZoom, glm::mat4 projection, glm::mat4 view)
+{
+	// Vincula o VAO (Vertex Array Object) para definir o estado do objeto
+	glBindVertexArray(VAO);
 
+	// Usa o programa de shader especificado
+	glUseProgram(tableProgram);
+
+	// Aplica a rotação ao modelo
+	model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	// Define as matrizes de modelo, visualização e projeção no shader
+	int modelLoc = glGetUniformLocation(tableProgram, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	int viewLoc = glGetUniformLocation(tableProgram, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view * matrizZoom));
+	int projLoc = glGetUniformLocation(tableProgram, "proj");
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+	// Define os parâmetros da luz ambiente
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
+
+	// Define os parâmetros da luz direcional
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "directionalLight.direction"), 1, glm::value_ptr(glm::vec3(1.0, 0.0, 0.0)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "directionalLight.diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "directionalLight.specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+
+	// Define os parâmetros da luz pontual #1
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 0.0, 5.0)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].ambient"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+	glProgramUniform3fv(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+	glProgramUniform1f(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].constant"), 1.0f);
+	glProgramUniform1f(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].linear"), 0.06f);
+	glProgramUniform1f(tableProgram, glGetProgramResourceLocation(tableProgram, GL_UNIFORM, "pointLight[0].quadratic"), 0.02f);
+
+	// Renderiza os elementos usando o VAO atual
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	// Desvincula o programa de shader
+	glUseProgram(0);
+}
+
+void loadTable() {
+
+	GLfloat vertices[] = {
+		// Frente              //Normal
+		-0.9f, -0.05f, 0.45f,   0.0f, 0.0f, 1.0f,
+		0.9f, -0.05f, 0.45f,    0.0f, 0.0f, 1.0f,
+		0.9f, 0.05f, 0.45f,     0.0f, 0.0f, 1.0f,
+		-0.9f, 0.05f, 0.45f,    0.0f, 0.0f, 1.0f,
+
+		// Trás
+		-0.9f, -0.05f, -0.45f,   0.0f, 0.0f, -1.0f,
+		-0.9f, 0.05f, -0.45f,    0.0f, 0.0f, -1.0f,
+		0.9f, 0.05f, -0.45f,     0.0f, 0.0f, -1.0f,
+		0.9f, -0.05f, -0.45f,    0.0f, 0.0f, -1.0f,
+
+		// Direita
+		0.9f, -0.05f, 0.45f,     1.0f, 0.0f, 0.0f,
+		0.9f, -0.05f, -0.45f,    1.0f, 0.0f, 0.0f,
+		0.9f, 0.05f, -0.45f,     1.0f, 0.0f, 0.0f,
+		0.9f, 0.05f, 0.45f,      1.0f, 0.0f, 0.0f,
+
+		// Esquerda
+		-0.9f, -0.05f, 0.45f,    -1.0f, 0.0f, 0.0f,
+		-0.9f, 0.05f, 0.45f,     -1.0f, 0.0f, 0.0f,
+		-0.9f, 0.05f, -0.45f,    -1.0f, 0.0f, 0.0f,
+		-0.9f, -0.05f, -0.45f,   -1.0f, 0.0f, 0.0f,
+
+		// Cima											    
+		-0.9f, 0.05f, 0.45f,     0.0f, 1.0f, 0.0f,
+		0.9f, 0.05f, 0.45f,      0.0f, 1.0f, 0.0f,
+		0.9f, 0.05f, -0.45f,     0.0f, 1.0f, 0.0f,
+		-0.9f, 0.05f, -0.45f,    0.0f, 1.0f, 0.0f,
+
+		// Baixo
+		-0.9f, -0.05f, 0.45f,   	0.0f, -1.0f, 0.0f,
+		-0.9f, -0.05f, -0.45f,  	0.0f, -1.0f, 0.0f,
+		0.9f, -0.05f, -0.45f,   	0.0f, -1.0f, 0.0f,
+		0.9f, -0.05f, 0.45f ,    	0.0f, -1.0f, 0.0f,
+	};
+
+	GLuint indices[] = {
+		// Face frontal
+		0, 1, 2,
+		2, 3, 0,
+
+		// Face traseira
+		4, 5, 6,
+		6, 7, 4,
+
+		// Face direita
+		8, 9, 10,
+		10, 11, 8,
+
+		// Face esquerda
+		12, 13, 14,
+		14, 15, 12,
+
+		// Face superior
+		16, 17, 18,
+		18, 19, 16,
+
+		// Face inferior
+		20, 21, 22,
+		22, 23, 20
+	};
+
+
+
+	// Gera um único objeto de VAO (Vertex Array Object)
+	glGenVertexArrays(1, &VAO);
+
+	// Gera um único buffer de vértices (VBO) e um único buffer de elementos (EBO)
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	// Define o VAO atual, vinculando-o
+	glBindVertexArray(VAO);
+
+	// Vincula o VBO como um buffer do tipo GL_ARRAY_BUFFER
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	// Armazena os vértices no VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Tipo de buffer, tamanho, dados, uso dos dados
+
+	// Vincula o EBO como um buffer do tipo GL_ELEMENT_ARRAY_BUFFER
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Configura o VAO para o OpenGL saber como ler o VBO
+	// Especifica o layout do atributo de vértice 0
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // O 3 especifica o número de componentes por atributo, cada vértice tem 3 posições (x, y, z)
+
+	// Especifica o layout do atributo de vértice 1
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // O 3 especifica o número de componentes por atributo, cada vértice tem 3 cores (r, g, b)
+
+	// Habilita o atributo de vértice 0
+	glEnableVertexAttribArray(0); // Dá-lhe 0 porque é a posição do atributo de vértice
+	// Habilita o atributo de vértice 1
+	glEnableVertexAttribArray(1); // Dá-lhe 1 porque é a posição do atributo de vértice
+
+	// Não obrigatório, mas para garantir que não alteramos o VAO e o VBO acidentalmente
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	// Isso deve ser feito após o VAO, porque o EBO está armazenado no VAO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
 
 int main(void) {
 
@@ -186,10 +339,22 @@ int main(void) {
 	// Usa o programa das bolas para a renderização
 	glUseProgram(shaderProgram);
 
-	
-	
+	// Array de informações dos shaders para o programa da mesa
+	ShaderInfo tableshaders[] = {
+		{ GL_VERTEX_SHADER,   "PoolTable.vert" },     // Shader de vértice da mesa
+		{ GL_FRAGMENT_SHADER, "PoolTable.frag" },     // Shader de fragmento da mesa
+		{ GL_NONE, NULL }                            // Marcação de fim do array
+	};
+
+	// Carrega os shaders e cria o programa da mesa
+	GLuint tableProgram = LoadShaders(tableshaders);
+
+	//Chama a função para carregar os dados da mesa
+	loadTable();
+
 	//Habilita o teste de profundidade
 	glEnable(GL_DEPTH_TEST);
+
 
 	//Cria e carrega as bolas
 
@@ -243,9 +408,11 @@ int main(void) {
 		glUseProgram(shaderProgram);
 
 		//Desenhar as bolas
-		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
-		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model);
+		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
 
+		//Desenhar a mesa
+		drawTable(tableProgram, matrizZoom, projection, view);
 
 		glfwSwapBuffers(window);
 
