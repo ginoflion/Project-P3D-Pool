@@ -44,11 +44,11 @@ namespace objLoader {
         std::vector<TextureCoord> texCoords;
         std::vector<Normal> normals;
 
-        void Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram);
-        void Send();
+        void Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram);
+        void Install();
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
-        void Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale);
+        void Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale);
 
     };
 }

@@ -358,64 +358,64 @@ int main(void) {
 	//Cria e carrega as bolas
 
 	objLoader::Ball ball1;
-	ball1.Read("PoolBalls/Ball1", 1, shaderProgram);
-	ball1.Send();
+	ball1.Load("PoolBalls/Ball1", 1, shaderProgram);
+	ball1.Install();
 
 	objLoader::Ball ball2;
-	ball2.Read("PoolBalls/Ball2", 2, shaderProgram);
-	ball2.Send();
+	ball2.Load("PoolBalls/Ball2", 2, shaderProgram);
+	ball2.Install();
 
 	objLoader::Ball ball3;
-	ball3.Read("PoolBalls/Ball3", 3, shaderProgram);
-	ball3.Send();
+	ball3.Load("PoolBalls/Ball3", 3, shaderProgram);
+	ball3.Install();
 
 	objLoader::Ball ball4;
-	ball4.Read("PoolBalls/Ball4", 4, shaderProgram);
-	ball4.Send();
+	ball4.Load("PoolBalls/Ball4", 4, shaderProgram);
+	ball4.Install();
 
 	objLoader::Ball ball5;
-	ball5.Read("PoolBalls/Ball5", 5, shaderProgram);
-	ball5.Send();
+	ball5.Load("PoolBalls/Ball5", 5, shaderProgram);
+	ball5.Install();
 
 	objLoader::Ball ball6;
-	ball6.Read("PoolBalls/Ball6", 6, shaderProgram);
-	ball6.Send();
+	ball6.Load("PoolBalls/Ball6", 6, shaderProgram);
+	ball6.Install();
 
 	objLoader::Ball ball7;
-	ball7.Read("PoolBalls/Ball7", 7, shaderProgram);
-	ball7.Send();
+	ball7.Load("PoolBalls/Ball7", 7, shaderProgram);
+	ball7.Install();
 
 	objLoader::Ball ball8;
-	ball8.Read("PoolBalls/Ball8", 8, shaderProgram);
-	ball8.Send();
+	ball8.Load("PoolBalls/Ball8", 8, shaderProgram);
+	ball8.Install();
 
 	objLoader::Ball ball9;
-	ball9.Read("PoolBalls/Ball9", 9, shaderProgram);
-	ball9.Send();
+	ball9.Load("PoolBalls/Ball9", 9, shaderProgram);
+	ball9.Install();
 
 	objLoader::Ball ball10;
-	ball10.Read("PoolBalls/Ball10", 10, shaderProgram);
-	ball10.Send();
+	ball10.Load("PoolBalls/Ball10", 10, shaderProgram);
+	ball10.Install();
 
 	objLoader::Ball ball11;
-	ball11.Read("PoolBalls/Ball11",11, shaderProgram);
-	ball11.Send();
+	ball11.Load("PoolBalls/Ball11",11, shaderProgram);
+	ball11.Install();
 
 	objLoader::Ball ball12;
-	ball12.Read("PoolBalls/Ball12", 12, shaderProgram);
-	ball12.Send();
+	ball12.Load("PoolBalls/Ball12", 12, shaderProgram);
+	ball12.Install();
 
 	objLoader::Ball ball13;
-	ball13.Read("PoolBalls/Ball13", 13, shaderProgram);
-	ball13.Send();
+	ball13.Load("PoolBalls/Ball13", 13, shaderProgram);
+	ball13.Install();
 
 	objLoader::Ball ball14;
-	ball14.Read("PoolBalls/Ball14", 14, shaderProgram);
-	ball14.Send();
+	ball14.Load("PoolBalls/Ball14", 14, shaderProgram);
+	ball14.Install();
 
 	objLoader::Ball ball15;
-	ball15.Read("PoolBalls/Ball15", 15, shaderProgram);
-	ball15.Send();
+	ball15.Load("PoolBalls/Ball15", 15, shaderProgram);
+	ball15.Install();
 
 
 
@@ -462,21 +462,21 @@ int main(void) {
 		glUseProgram(shaderProgram);
 
 		// Desenhar as bolas com a escala definida
-		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball2.Draw(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball3.Draw(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball4.Draw(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball5.Draw(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball6.Draw(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball7.Draw(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball8.Draw(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball9.Draw(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball10.Draw(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball11.Draw(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball12.Draw(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball13.Draw(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball14.Draw(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-		ball15.Draw(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball4.Render(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball5.Render(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball6.Render(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball7.Render(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball8.Render(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball9.Render(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball10.Render(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball11.Render(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball12.Render(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+		ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
 
 		//Desenhar a mesa
 		drawTable(tableProgram, matrizZoom, projection, view);

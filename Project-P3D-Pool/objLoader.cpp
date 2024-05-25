@@ -21,7 +21,7 @@ namespace objLoader {
 
     GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
 
-    void Ball::Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
+    void Ball::Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
         this->ShaderProgram = shaderprogram;
         this->textureIndex = textureIndex;
 
@@ -74,7 +74,7 @@ namespace objLoader {
         }
     }
 
-    void Ball::Send() {
+    void Ball::Install() {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -166,7 +166,7 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    void Ball::Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
+    void Ball::Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
