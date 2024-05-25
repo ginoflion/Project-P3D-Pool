@@ -124,6 +124,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>glu32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -136,10 +137,8 @@
     <ClInclude Include="shaderLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ball.frag" />
-    <None Include="ball.vert" />
-    <None Include="table.frag" />
-    <None Include="table.vert" />
+    <None Include="triangles.frag" />
+    <None Include="triangles.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

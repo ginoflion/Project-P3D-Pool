@@ -1,43 +1,35 @@
-﻿#pragma comment(lib, "glfw3.lib")
+﻿#pragma comment(lib, "glew32s.lib")
+#pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glew32s.lib")
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include <iostream>
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-#include <Windows.h>
-
+#define GLEW_STATIC
 #include <GL/glew.h>
-#include <gl/GL.h>
+
+#define GLFW_USE_DWM_SWAP_INTERVAL
 #include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp> 
-#include <glm/gtc/matrix_transform.hpp> 
-#include <glm/gtc/type_ptr.hpp> 
-
-#include "stb_image.h"
 
 #include "objLoader.h"
 #include "shaderLoader.h"
 
-void init(void);
 
-#define WIDTH 800
-#define HEIGHT 600
-
+//Variável para controlar o zoom
 GLfloat ZOOM = 10.0f;
-GLfloat ANGLE = 0.0f;
-double lastX = WIDTH / 2.0;
-double lastY = HEIGHT / 2.0;
-bool firstMouse = true;
 
-// Variáveis para armazenar o ângulo de rotação
-float yaw = -90.0f; // yaw é inicializado para -90 graus para que a primeira pessoa olhe para o centro
-float pitch = 0.0f;
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+//Variável para controlar a rotação da bola durante a animação
+float currentBallRotation = 0.0f;
 
+//Variaveis para criação de VAO,VBO,EBO
+GLuint VAO, VBO, EBO;
 
-//ballpositions
+//Posições das bolas de bilhar
 glm::vec3 BallPositions[] = {
 	glm::vec3(-0.5f, 0.1f, 0.2f),
 	glm::vec3(-0.4f, 0.1f, 0.1f),
@@ -56,230 +48,217 @@ glm::vec3 BallPositions[] = {
 	glm::vec3(0.8f, 0.1f, -0.25f)
 };
 
+//variaveis para controlar a rotação do objeto
+glm::vec2 clickPos;
+glm::vec2 prevClickPos;
+glm::vec3 rotationAngles(0.0f, 0.0f, 0.0f);
 
 //matrizes de modelação e projeção
 glm::mat4 model(1.0f);
 glm::mat4 proj(1.0f);
 
-// Função de callback para o movimento do mouse
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	if (firstMouse) {
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
+
+// Função de callback para clique do rato
+void mouseClickCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	// Verifica se o botão esquerdo do mouse foi pressionado
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		// Obtém as coordenadas do cursor do rato
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		clickPos = glm::vec2(xpos, ypos);
+		prevClickPos = clickPos;
+	}
+	// Verifica se o botão esquerdo do mouse foi libertado
+	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+	{
+		// Zera os ângulos de rotação
+		rotationAngles.x = 0.0f;
+		rotationAngles.y = 0.0f;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; 
-
-	lastX = xpos;
-	lastY = ypos;
-
-	float sensitivity = 0.1f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	// Aplica a rotação no modelo
+	model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
+
+//Funcao de callback para lidar com o movimento do rato
+void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		prevClickPos = clickPos;
+		clickPos = glm::vec2(xpos, ypos);
+
+		// Calcula a diferença entre as posições atuais do clique e as posições anteriores do clique
+		glm::vec2 clickDelta = clickPos - prevClickPos;
+
+		// Sensibilidade de rotação (quanto cada pixel de movimento do mouse afeta a rotação)
+		const float sensitivity = 0.004f;
+
+		// Atualiza o ângulo de rotação ao longo do eixo Y com base no movimento horizontal do mouse
+		rotationAngles.y += clickDelta.x * sensitivity;
+	}
+}
+
+
+//Função callback para o zoom do rato
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+
 	// Se faz zoom in
 	if (yoffset == 1) {
-		// Incremento no zoom, varia com a dist�ncia da c�mara
+
+		// Incremento no zoom, varia com a distância da câmara
 		ZOOM += fabs(ZOOM) * 0.1f;
 	}
-	// Sen�o, se faz zoom out
+
+	// Senão, se faz zoom out
 	else if (yoffset == -1) {
-		// Incremento no zoom, varia com a dist�ncia da c�mara
+
+		// Incremento no zoom, varia com a distância da câmara
 		ZOOM -= fabs(ZOOM) * 0.1f;
 	}
-	std::cout << "ZOOM = " << ZOOM << std::endl;
+
 }
 
-std::vector<glm::vec3> Load3DModel(void) {
-	// 6 faces * 4 v�rtices por face
-	float length = 7.0f; // Comprimento do paralelepípedo
-	float width = 4.0f;  // Largura do paralelepípedo
-	float height = 1.0f; // Altura do paralelepípedo
 
-
-	glm::vec3 point[6 * 4] = {
-		// Frente
-		glm::vec3(-length / 2.0f, -width / 2.0f,  height / 2.0f),
-		glm::vec3(length / 2.0f, -width / 2.0f,  height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f,  height / 2.0f),
-		glm::vec3(-length / 2.0f,  width / 2.0f,  height / 2.0f),
-		// Trás
-		glm::vec3(-length / 2.0f, -width / 2.0f, -height / 2.0f),
-		glm::vec3(-length / 2.0f,  width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f, -width / 2.0f, -height / 2.0f),
-		// Direita
-		glm::vec3(length / 2.0f, -width / 2.0f,  height / 2.0f),
-		glm::vec3(length / 2.0f, -width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f,  height / 2.0f),
-		// Esquerda
-		glm::vec3(-length / 2.0f, -width / 2.0f,  height / 2.0f),
-		glm::vec3(-length / 2.0f,  width / 2.0f,  height / 2.0f),
-		glm::vec3(-length / 2.0f,  width / 2.0f, -height / 2.0f),
-		glm::vec3(-length / 2.0f, -width / 2.0f, -height / 2.0f),
-		// Cima
-		glm::vec3(-length / 2.0f,  width / 2.0f,  height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f,  height / 2.0f),
-		glm::vec3(length / 2.0f,  width / 2.0f, -height / 2.0f),
-		glm::vec3(-length / 2.0f,  width / 2.0f, -height / 2.0f),
-		// Baixo
-		glm::vec3(-length / 2.0f, -width / 2.0f,  height / 2.0f),
-		glm::vec3(-length / 2.0f, -width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f, -width / 2.0f, -height / 2.0f),
-		glm::vec3(length / 2.0f, -width / 2.0f,  height / 2.0f)
-	};
-
-	std::vector<glm::vec3> ret;
-	for (auto i : point)
-		ret.push_back(i);
-
-	return ret;
-}
-
-void display(std::vector<glm::vec3> obj, glm::mat4 mvp) {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	float* vertex_stream = static_cast<float*>(glm::value_ptr(obj.front()));
-
-	std::vector<glm::vec3> colors{
-		glm::vec3(1.0f, 0.0f, 0.0f), // Red
-		glm::vec3(1.0f, 1.0f, 0.0f), // Yellow
-		glm::vec3(0.0f, 1.0f, 0.0f), // Green
-		glm::vec3(0.0f, 1.0f, 1.0f), // Cyan
-		glm::vec3(0.0f, 0.0f, 1.0f), // Blue
-		glm::vec3(1.0f, 0.0f, 1.0f)  // Magenta
-	};
-
-	// Desenha quad em modo imediato
-	glBegin(GL_QUADS);
-	/* obj.size() * (obj.front().length()) � o mesmo que (6*4)*3 */
-	/* 6 faces * 4 v�rtices por face * 3 coordenadas por v�rtice */
-	for (int nv = 0; nv < 6 * 4 * 3; nv += 3) {
-		// Uma cor por face
-		glColor3f(colors[nv / (4 * 3)].r, colors[nv / (4 * 3)].g, colors[nv / (4 * 3)].b);
-		glm::vec4 vertex = glm::vec4(vertex_stream[nv], vertex_stream[nv + 1], vertex_stream[nv + 2], 1.0f);
-		// C�lculo das coordenadas de recorte
-		glm::vec4 transformed_vertex = mvp * vertex;
-		// Divis�o de Perspetiva
-		glm::vec4 normalized_vertex = transformed_vertex / transformed_vertex.w;
-		// Desenho do v�rtice
-		glVertex3f(normalized_vertex.x, normalized_vertex.y, normalized_vertex.z);
-	}
-	glEnd();
-}
 
 int main(void) {
-	std::vector<glm::vec3> obj = Load3DModel();
 
-	GLFWwindow* window;
+	//Inicializar glfw para criar uma janela
+	glfwInit();
 
-	if (!glfwInit()) return -1;
+	//Glfw nao sabe que versao do opengl estamos a usar , temos de dizer isso atraves de hints
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); //especificamos que vamos usar a versao do opengl3.3
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);//Major = 3 , Minor = 3 , porque é versao 3.3
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//especificar que opengl profile queremos usar , é como se fosse um package de funções , core profile dá-nos as funções modernas
 
 
-	window = glfwCreateWindow(WIDTH, HEIGHT, "P3D - Trabalho Pratico 1 (Part #1)", NULL, NULL);
+	//Width,height,name of the window , full screnn ou não
+	GLFWwindow* window = glfwCreateWindow(800, 800, "PoolTable", NULL, NULL);
+
 	if (window == NULL) {
+
+		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
-		return -1;
 	}
 
+	//Usar a janela
 	glfwMakeContextCurrent(window);
-	if (glewInit() != GLEW_OK) {
-        std::cerr << "Failed to initialize GLEW" << std::endl;
-        return -1;
-    }
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	init();
+	// Inicia o gestor de extensões GLEW
+	glewExperimental = GL_TRUE;
+	glewInit();
 
+
+	//chamar as funções callback
 	glfwSetScrollCallback(window, scrollCallback);
+	glfwSetMouseButtonCallback(window, mouseClickCallback);
+	glfwSetCursorPosCallback(window, mouseMovementCallback);
 
-	glfwSetCursorPosCallback(window, mouse_callback);
+	//Dizer ao Opengl para limpar a cor do buffer e dar-lhe outra
+	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 
+	//Especificamos que queremos usar o comando no buffer de cor
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Temos um back buffer com a cor que queremos e um front buffer com a cor default , temos de trocar
+	glfwSwapBuffers(window);
+
+	//Dizer que area da janela queremos que o OpenGl faça a renderização
+	glViewport(0, 0, 800, 800);
+
+
+	// Array de informações dos shaders para o programa das bolas
 	ShaderInfo shaders[] = {
-	{ GL_VERTEX_SHADER, "Shaders/ball.vert" }, // Shader de vértice
-	{ GL_FRAGMENT_SHADER, "Shaders/ball.frag" }, // Shader de fragmento
-	{ GL_NONE, NULL } // Marcação de fim do array
+		{ GL_VERTEX_SHADER,   "triangles.vert" },     // Shader de vértice
+		{ GL_FRAGMENT_SHADER, "triangles.frag" },     // Shader de fragmento
+		{ GL_NONE, NULL }                            // Marcação de fim do array
 	};
-	GLuint Shader = LoadShaders(shaders);
-	if (!Shader)
+
+	// Carrega os shaders e cria o programa das bolas
+	GLuint shaderProgram = LoadShaders(shaders);
+	if (!shaderProgram)
 		exit(EXIT_FAILURE);
 
-	//glUseProgram(Shader);
+	// Usa o programa das bolas para a renderização
+	glUseProgram(shaderProgram);
+
+	
+	
+	//Habilita o teste de profundidade
+	glEnable(GL_DEPTH_TEST);
+
+	//Cria e carrega as bolas
 
 	objLoader::Ball ball1;
-	objLoader::Ball ball2;
-	objLoader::Ball ball3;
-	objLoader::Ball ball4;
-	objLoader::Ball ball5;
-	objLoader::Ball ball6;
-	objLoader::Ball ball7;
-	objLoader::Ball ball8;
-	objLoader::Ball ball9;
-	objLoader::Ball ball10;
-	objLoader::Ball ball11;
-	objLoader::Ball ball12;
-	objLoader::Ball ball13;
-	objLoader::Ball ball14;
-	objLoader::Ball ball15;
+	ball1.Read("PoolBalls/Ball1", 1, shaderProgram);
+	ball1.Send();
 
-	ball1.loadOBJ("PoolBalls/Ball1", 1, Shader);
-	ball1.loadVertexGPU();
+	//Matriz projeção
+	glm::mat4 projection = glm::mat4(1.0f);
 
 	//Matriz visualização
 	glm::mat4 view = glm::mat4(1.0f);
 
-	// Projection
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.f);
-	//Matriz ZOOM
-	glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
+	//Posição da camera
+	glm::vec3 position(glm::vec3(0.0f, 10.0f, 20.0f));
 
-	ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model,Shader);
+	//Target da camera
+	glm::vec3 target(glm::vec3(0.0f));
+
+	//Calculos para a camara
+	glm::vec3 camFront = position - target;
+	glm::vec3 camRight = glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 up = -glm::cross(camFront, camRight);
+
+	//Definicao das matrizes
+	projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
+	view = glm::lookAt(position, target, up);
+
 
 	while (!glfwWindowShouldClose(window)) {
-		// View
-		glm::vec3 cameraPos;
-		cameraPos.x = ZOOM * cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		cameraPos.y = ZOOM * sin(glm::radians(pitch));
-		cameraPos.z = ZOOM * sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
-		// View
-		//  // Vector vertical
-		glm::vec3 up = glm::vec3(0.0f, cos(glm::radians(pitch)) > 0 ? 1.0f : -1.0f, 0.0f);
+		//Define a cor de fundo para o framebuffer,
+		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 
-		glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0f, 0.0f, 0.0f), up);
+		//Limpar buffer de cor e profundidade
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//Matriz ZOOM
+		glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
-		// Model
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 mvp = projection * view * model;
+		//Bind the vao so OPengl knows to use it
+		glBindVertexArray(VAO);
 
 
-		display(obj, mvp);
+		//Dizer que programa usar (usamos o programa das bolas)
+		glUseProgram(shaderProgram);
+
+		//Desenhar as bolas
+		ball1.Draw(BallPositions[0], glm::vec3(0.0f, 0.0f, -currentBallRotation), view * matrizZoom, projection, model);
+
+
 
 		glfwSwapBuffers(window);
+
+		//Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta
 		glfwPollEvents();
+
 	}
 
-	glfwTerminate();
-	return 0;
-}
+	//Apaga o VAO,VBO,EBO e o programa shader
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteProgram(shaderProgram);
 
-void init(void) {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glEnable(GL_DEPTH_TEST);
+	//Destruir a janela
+	glfwDestroyWindow(window);
+
+	glfwTerminate();
+
+	return 0;
 }

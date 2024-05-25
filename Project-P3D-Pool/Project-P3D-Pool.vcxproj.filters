@@ -34,16 +34,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ball.frag">
+    <None Include="triangles.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="ball.vert">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="table.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="table.vert">
+    <None Include="triangles.vert">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

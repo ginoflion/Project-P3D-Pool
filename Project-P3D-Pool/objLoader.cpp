@@ -5,9 +5,11 @@
 #include <vector>
 
 #include <Windows.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
+
+
+
+#include "stb_image.h"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <gl/GL.h>
@@ -24,35 +26,12 @@ namespace objLoader {
 
     GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals, VBOfaces;
 
-    void Ball:: loadVertexGPU() {
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
+    
 
+    void Ball:: Read(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
+        this->ShaderProgram = shaderprogram;
+        this->textureIndex = textureIndex;
 
-        glGenBuffers(1, &VBOvertices);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOvertices);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        glGenBuffers(1, &VBOtexCoords);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOtexCoords);
-        glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(glm::vec3), texCoords.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-
-        glGenBuffers(1, &VBOnormals);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOnormals);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        glGenBuffers(1, &VBOfaces);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOfaces);
-        glBufferData(GL_ARRAY_BUFFER, faces.size() * sizeof(glm::vec3), faces.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        glBindVertexArray(0);
-    }
-
-    void Ball:: loadOBJ(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
 
         std::ifstream file(filename + ".obj");
         if (!file) {
@@ -102,7 +81,7 @@ namespace objLoader {
             }
             else if (prefix == "mtllib") {
                 iss >> mtlFilename;
-                loadMTL("PoolBalls/" + mtlFilename);
+                ReadMTL("PoolBalls/" + mtlFilename);
             }
         }
         std::vector<Vertex> orderedVertices;
@@ -116,7 +95,46 @@ namespace objLoader {
 
     }
 
-    void Ball:: loadMTL(const std::string& filename) {
+    void Ball::Send() {
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBOvertices);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOvertices);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glGenBuffers(1, &VBOtexCoords);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOtexCoords);
+    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(glm::vec2), texCoords.data(), GL_STATIC_DRAW); // Change glm::vec3 to glm::vec2
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Change 3 to 2
+    glEnableVertexAttribArray(1);
+
+    glGenBuffers(1, &VBOnormals);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOnormals);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), normals.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(2);
+
+    glGenBuffers(1, &VBOfaces);
+    glBindBuffer(GL_ARRAY_BUFFER, VBOfaces);
+    glBufferData(GL_ARRAY_BUFFER, faces.size() * sizeof(glm::vec3), faces.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(3);
+
+    GLint textura = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "textSampler");
+    glProgramUniform1i(ShaderProgram, textura, 0);
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        std::cout << "OpenGL Error: " << error << std::endl;
+    }
+
+    glBindVertexArray(0);
+}
+
+
+    void Ball:: ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
         std::string line;
 
@@ -149,16 +167,15 @@ namespace objLoader {
             else if (prefix == "map_Kd") {
                 std::string textureFilename;
                 iss >> textureFilename;
-                loadTexture(textureFilename);
+                LoadTexture(textureFilename);
             }
         }
     }
 
-    GLuint textureID; // Variável global para armazenar o ID da textura
 
-    void Ball:: loadTexture(const std::string& filename) {
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_2D, textureID);
+    void Ball:: LoadTexture(const std::string& filename) {
+        glGenTextures(1, &textureIndex);
+        glBindTexture(GL_TEXTURE_2D, textureIndex);
         stbi_set_flip_vertically_on_load(true);
         int width, height, nrChannels;
         std::cout << filename;
@@ -187,11 +204,10 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    GLuint ShaderProgram ;
 
-    void Ball:: Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLuint shaderProgram){
+    void Ball::Draw(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model) {
 
-        ShaderProgram = shaderProgram;
+        //Vincula o VAO
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
@@ -230,11 +246,13 @@ namespace objLoader {
         }
 
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.emissive"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
+        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(1.5, 1.5, 1.5)));
 
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, textureIndex);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     }
+
 
   
 }
