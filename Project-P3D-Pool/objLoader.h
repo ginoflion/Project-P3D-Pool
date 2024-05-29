@@ -17,7 +17,7 @@
 #include <glm/gtc/type_ptr.hpp> 
 
 namespace objLoader {
-    class Ball {
+    class Object {
         struct Vertex {
             float x, y, z;
         };
@@ -30,13 +30,11 @@ namespace objLoader {
             float x, y, z;
         };
 
-        
-
-
     private: 
 
         GLuint ShaderProgram;
         GLuint textureIndex;
+        GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
         
     public:
 
@@ -49,7 +47,6 @@ namespace objLoader {
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
         void Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale);
-
     };
 }
 

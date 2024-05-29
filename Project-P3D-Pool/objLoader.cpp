@@ -19,9 +19,7 @@
 namespace objLoader {
     std::string mtlFilename;
 
-    GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
-
-    void Ball::Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
+    void Object::Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
         this->ShaderProgram = shaderprogram;
         this->textureIndex = textureIndex;
 
@@ -74,7 +72,7 @@ namespace objLoader {
         }
     }
 
-    void Ball::Install() {
+    void Object::Install() {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -99,7 +97,7 @@ namespace objLoader {
         glBindVertexArray(0);
     }
 
-    void Ball::ReadMTL(const std::string& filename) {
+    void Object::ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
         std::string line;
 
@@ -137,7 +135,7 @@ namespace objLoader {
         }
     }
 
-    void Ball::LoadTexture(const std::string& filename) {
+    void Object::LoadTexture(const std::string& filename) {
         glGenTextures(1, &textureIndex);
         glBindTexture(GL_TEXTURE_2D, textureIndex);
         stbi_set_flip_vertically_on_load(true);
@@ -166,7 +164,7 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    void Ball::Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
+    void Object::Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         glBindVertexArray(VAO);
 
         glm::mat4 Model = model;
@@ -193,5 +191,4 @@ namespace objLoader {
 
         glBindVertexArray(0);
     }
-
 }
