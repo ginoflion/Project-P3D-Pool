@@ -22,7 +22,7 @@
 GLuint VAO, VBO, EBO;
 
 //Variável para controlar o zoom
-GLfloat ZOOM = 10.0f;
+GLfloat ZOOM = 5.0f;
 
 glm::vec3 BallPositions[] = {
     glm::vec3(-0.5f, 0.1f, 0.2f),
@@ -50,6 +50,12 @@ glm::vec3 rotationAngles(0.0f, 0.0f, 0.0f);
 //matrizes de modelação e projeção
 glm::mat4 model(1.0f);
 glm::mat4 proj(1.0f);
+
+// Matriz de rotação para a mesa (90 graus ao redor do eixo Y)
+glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+// Aplicar rotação à matriz do modelo da mesa
+glm::mat4 tableModel = rotation * model;
 
 bool isMousePressed = false;
 
@@ -229,7 +235,8 @@ int main(void) {
     projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
 
     // Define a escala que você quer aplicar às bolas
-    glm::vec3 scale(0.05f, 0.05f, 0.05f); // Reduz o tamanho das bolas para 5% do tamanho original
+    glm::vec3 scaleBall(0.05f, 0.05f, 0.05f); // Reduz o tamanho das bolas para 5% do tamanho original
+	glm::vec3 scale(0.3f, 0.1f, 0.25f); // Reduz o tamanho da mesa
 
     while (!glfwWindowShouldClose(window)) {
         // Define a cor de fundo para o framebuffer
@@ -256,24 +263,24 @@ int main(void) {
         // Dizer que programa usar (usamos o programa das bolas)
         glUseProgram(shaderProgram);
 
-        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, tableModel, scale);
 
         // Desenhar as bolas com a escala definida
-        ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball4.Render(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball5.Render(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball6.Render(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball7.Render(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball8.Render(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball9.Render(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball10.Render(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball11.Render(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball12.Render(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
-        ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scale);
+        ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball4.Render(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball5.Render(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball6.Render(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball7.Render(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball8.Render(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball9.Render(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball10.Render(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball11.Render(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball12.Render(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
 
         glfwSwapBuffers(window);
         // Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta
