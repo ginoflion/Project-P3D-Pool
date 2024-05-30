@@ -234,10 +234,6 @@ int main(void) {
     //Definicao das matrizes
     projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
 
-    // Define a escala que você quer aplicar às bolas
-    glm::vec3 scaleBall(0.05f, 0.05f, 0.05f); // Reduz o tamanho das bolas para 5% do tamanho original
-	glm::vec3 scale(0.3f, 0.1f, 0.25f); // Reduz o tamanho da mesa
-
     while (!glfwWindowShouldClose(window)) {
         // Define a cor de fundo para o framebuffer
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -263,24 +259,52 @@ int main(void) {
         // Dizer que programa usar (usamos o programa das bolas)
         glUseProgram(shaderProgram);
 
-        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, tableModel, scale);
+        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
+        // Multiplicar a matriz view pela matriz de zoom
+        view = view * matrizZoom;
+
+        // Definir a escala das bolas
+        glm::vec3 scale = glm::vec3(0.05f, 0.05f, 0.05f);
+        // Definir a escala da mesa
+        glm::vec3 tabbleScale(0.3f, 0.1f, 0.25f); // Reduz o tamanho da mesa
+
+        // Definir as matrizes de model, view e projection para a mesa
+        table.SetMatrices(view, projection, tableModel, tabbleScale);
+
+        //Definir as matrizes de model, view e projection para as bolas
+        ball1.SetMatrices(view, projection, model, scale);
+		ball2.SetMatrices(view, projection, model, scale);
+        ball3.SetMatrices(view, projection, model, scale);
+        ball4.SetMatrices(view, projection, model, scale);
+        ball5.SetMatrices(view, projection, model, scale);
+        ball6.SetMatrices(view, projection, model, scale);
+        ball7.SetMatrices(view, projection, model, scale);
+        ball8.SetMatrices(view, projection, model, scale);
+        ball9.SetMatrices(view, projection, model, scale);
+        ball10.SetMatrices(view, projection, model, scale);
+        ball11.SetMatrices(view, projection, model, scale);
+        ball12.SetMatrices(view, projection, model, scale);
+        ball13.SetMatrices(view, projection, model, scale);
+        ball14.SetMatrices(view, projection, model, scale); 
+        ball15.SetMatrices(view, projection, model, scale);
 
         // Desenhar as bolas com a escala definida
-        ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball4.Render(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball5.Render(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball6.Render(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball7.Render(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball8.Render(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball9.Render(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball10.Render(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball11.Render(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball12.Render(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
-        ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f), view * matrizZoom, projection, model, scaleBall);
+        ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball4.Render(BallPositions[3], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball5.Render(BallPositions[4], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball6.Render(BallPositions[5], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball7.Render(BallPositions[6], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball8.Render(BallPositions[7], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball9.Render(BallPositions[8], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball10.Render(BallPositions[9], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball11.Render(BallPositions[10], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball12.Render(BallPositions[11], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f));
+        ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f));
 
         glfwSwapBuffers(window);
         // Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta

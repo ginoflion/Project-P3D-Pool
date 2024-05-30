@@ -35,6 +35,11 @@ namespace objLoader {
         GLuint ShaderProgram;
         GLuint textureIndex;
         GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
+
+        glm::mat4 viewMatrix;
+        glm::mat4 projectionMatrix;
+        glm::mat4 modelMatrix;
+        glm::vec3 scaleVector; 
         
     public:
 
@@ -46,7 +51,8 @@ namespace objLoader {
         void Install();
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
-        void Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale);
+        void Render(glm::vec3 position, glm::vec3 orientation);
+        void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Funçao para as matrizes
     };
 }
 

@@ -164,21 +164,21 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    void Object::Render(glm::vec3 position, glm::vec3 orientation, glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
+    void objLoader::Object::Render(glm::vec3 position, glm::vec3 orientation) {
         glBindVertexArray(VAO);
 
-        glm::mat4 Model = model;
+        glm::mat4 Model = modelMatrix;
         Model = glm::translate(Model, position);
         Model = glm::rotate(Model, glm::radians(orientation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        Model = glm::scale(Model, scale); // Aplica a transformação de escala
+        Model = glm::scale(Model, scaleVector); // Apply scaling
 
         GLint viewId = glGetUniformLocation(ShaderProgram, "View");
-        glUniformMatrix4fv(viewId, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(viewId, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
         GLint projectionId = glGetUniformLocation(ShaderProgram, "Projection");
-        glUniformMatrix4fv(projectionId, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(projectionId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
         GLint modelId = glGetUniformLocation(ShaderProgram, "Model");
         glUniformMatrix4fv(modelId, 1, GL_FALSE, glm::value_ptr(Model));
@@ -190,5 +190,12 @@ namespace objLoader {
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
         glBindVertexArray(0);
+    }
+
+    void objLoader::Object::SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
+        this->viewMatrix = view;
+        this->projectionMatrix = projection;
+        this->modelMatrix = model;
+        this->scaleVector = scale;
     }
 }
