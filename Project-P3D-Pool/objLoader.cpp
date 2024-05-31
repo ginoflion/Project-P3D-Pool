@@ -192,10 +192,15 @@ namespace objLoader {
         glProgramUniformMatrix4fv(ShaderProgram, normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
 
+        /*glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(material.ambient));
+        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.diffuse"), 1, glm::value_ptr(material.diffuse));
+        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.specular"), 1, glm::value_ptr(material.specular));
+        glProgramUniform1f(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.shininess"), material.shininess);*/
+
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(glGetUniformLocation(ShaderProgram, "TexSampler"), 0);
-        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.emissive"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
         glProgramUniform3fv(ShaderProgram, glGetUniformLocation(ShaderProgram, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(0.8, 0.8, 0.8)));
+
         
         glBindTexture(GL_TEXTURE_2D, textureIndex);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
