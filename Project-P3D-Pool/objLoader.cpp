@@ -20,13 +20,12 @@ namespace objLoader {
     std::string mtlFilename;
     
 
-    void Object::Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
-        this->ShaderProgram = shaderprogram;
-        this->textureIndex = textureIndex;
+    void Object::Load(const std::string obj_model_filepath) {
+        
 
-        std::ifstream file(filename + ".obj");
+        std::ifstream file(obj_model_filepath + ".obj");
         if (!file) {
-            std::cerr << "Cannot open OBJ file: " << filename << std::endl;
+            std::cerr << "Cannot open OBJ file: " << obj_model_filepath << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -101,7 +100,6 @@ namespace objLoader {
     void Object::ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
         std::string line;
-        Material material;
 
         if (!file) {
             std::cerr << "Cannot open MTL file: " << filename << std::endl;
@@ -192,10 +190,10 @@ namespace objLoader {
         glProgramUniformMatrix4fv(ShaderProgram, normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
 
-        /*glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(material.ambient));
+        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(material.ambient));
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.diffuse"), 1, glm::value_ptr(material.diffuse));
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.specular"), 1, glm::value_ptr(material.specular));
-        glProgramUniform1f(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.shininess"), material.shininess);*/
+        glProgramUniform1f(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.shininess"), material.shininess);
 
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(glGetUniformLocation(ShaderProgram, "TexSampler"), 0);
@@ -213,5 +211,10 @@ namespace objLoader {
         this->projectionMatrix = projection;
         this->modelMatrix = model;
         this->scaleVector = scale;
+    }
+
+    void Object::SetShader(GLuint textureIndex, GLuint shaderprogram) {
+        this->ShaderProgram = shaderprogram;
+        this->textureIndex = textureIndex;
     }
 }

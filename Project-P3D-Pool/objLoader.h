@@ -54,11 +54,12 @@ namespace objLoader {
         std::vector<TextureCoord> texCoords;
         std::vector<Normal> normals;
 
-        void Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram);
+        void Load(const std::string obj_model_filepath);
         void Install();
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
         void Render(glm::vec3 position, glm::vec3 orientation);
         void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Função para as matrizes
+        void SetShader(GLuint textureIndex, GLuint shaderprogram);
     };
 }

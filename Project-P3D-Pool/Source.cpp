@@ -183,60 +183,76 @@ int main(void) {
 
     //Cria e carrega as bolas
     objLoader::Object ball1;
-    ball1.Load("PoolBalls/Ball1", 1, shaderProgram);
+    ball1.SetShader(1, shaderProgram);
+    ball1.Load("PoolBalls/Ball1");
     ball1.Install();
     objLoader::Object ball2;
-    ball2.Load("PoolBalls/Ball2", 2, shaderProgram);
+    ball2.SetShader(1, shaderProgram);
+    ball2.Load("PoolBalls/Ball2");
     ball2.Install();
     objLoader::Object ball3;
-    ball3.Load("PoolBalls/Ball3", 3, shaderProgram);
+    ball3.SetShader(1, shaderProgram);
+    ball3.Load("PoolBalls/Ball3");
     ball3.Install();
     objLoader::Object ball4;
-    ball4.Load("PoolBalls/Ball4", 4, shaderProgram);
+    ball4.SetShader(1, shaderProgram);
+    ball4.Load("PoolBalls/Ball4");
     ball4.Install();
     objLoader::Object ball5;
-    ball5.Load("PoolBalls/Ball5", 5, shaderProgram);
+    ball5.SetShader(1, shaderProgram);
+    ball5.Load("PoolBalls/Ball5");
     ball5.Install();
     objLoader::Object ball6;
-    ball6.Load("PoolBalls/Ball6", 6, shaderProgram);
+    ball6.SetShader(1, shaderProgram);
+    ball6.Load("PoolBalls/Ball6");
     ball6.Install();
     objLoader::Object ball7;
-    ball7.Load("PoolBalls/Ball7", 7, shaderProgram);
+    ball7.SetShader(1, shaderProgram);
+    ball7.Load("PoolBalls/Ball7");
     ball7.Install();
     objLoader::Object ball8;
-    ball8.Load("PoolBalls/Ball8", 8, shaderProgram);
+    ball8.SetShader(1, shaderProgram);
+    ball8.Load("PoolBalls/Ball8");
     ball8.Install();
     objLoader::Object ball9;
-    ball9.Load("PoolBalls/Ball9", 9, shaderProgram);
+    ball9.SetShader(1, shaderProgram);
+    ball9.Load("PoolBalls/Ball9");
     ball9.Install();
     objLoader::Object ball10;
-    ball10.Load("PoolBalls/Ball10", 10, shaderProgram);
+    ball10.SetShader(1, shaderProgram);
+    ball10.Load("PoolBalls/Ball10");
     ball10.Install();
     objLoader::Object ball11;
-    ball11.Load("PoolBalls/Ball11", 11, shaderProgram);
+    ball11.SetShader(1, shaderProgram);
+    ball11.Load("PoolBalls/Ball11");
     ball11.Install();
     objLoader::Object ball12;
-    ball12.Load("PoolBalls/Ball12", 12, shaderProgram);
+    ball12.SetShader(1, shaderProgram);
+    ball12.Load("PoolBalls/Ball12");
     ball12.Install();
     objLoader::Object ball13;
-    ball13.Load("PoolBalls/Ball13", 13, shaderProgram);
+    ball13.SetShader(1, shaderProgram);
+    ball13.Load("PoolBalls/Ball13");
     ball13.Install();
     objLoader::Object ball14;
-    ball14.Load("PoolBalls/Ball14", 14, shaderProgram);
+    ball14.SetShader(1, shaderProgram);
+    ball14.Load("PoolBalls/Ball14");
     ball14.Install();
     objLoader::Object ball15;
-    ball15.Load("PoolBalls/Ball15", 15, shaderProgram);
+    ball15.SetShader(1, shaderProgram);
+    ball15.Load("PoolBalls/Ball15");
     ball15.Install();
     objLoader::Object table;
-    table.Load("PoolBalls/Table", 16, shaderProgram);
+    table.SetShader(1, shaderProgram);
+    table.Load("PoolBalls/Table");
     table.Install();
 
 
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(0.1, 0.1, 0.1)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(5.0, 5.0, 5.0)));
 
     // Fonte de luz direcional
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.direction"), 1, glm::value_ptr(glm::vec3(1.0, 0.0, 0.0)));
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.2, 0.2, 0.2)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.4,0.4,0.4)));
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
 
@@ -258,10 +274,7 @@ int main(void) {
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].linear"), 0.06f);
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].quadratic"), 0.02f);
 
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(glm::vec3(0.7, 0.7, 0.7)));
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.diffuse"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.specular"), 1, glm::value_ptr(glm::vec3(0.6, 0.6, 0.6)));
-    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.shininess"), 5.0f);
+    
 
     //Matriz projeção
     glm::mat4 projection = glm::mat4(1.0f);
