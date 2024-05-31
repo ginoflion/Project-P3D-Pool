@@ -30,8 +30,16 @@ namespace objLoader {
             float x, y, z;
         };
 
-    private: 
+        struct Material {
+            glm::vec3 ambient;
+            glm::vec3 diffuse;
+            glm::vec3 specular;
+            float shininess;
+            std::string textureFilename;
+        };
 
+    private:
+        Material material; // Adicionando a variável material
         GLuint ShaderProgram;
         GLuint textureIndex;
         GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
@@ -39,10 +47,9 @@ namespace objLoader {
         glm::mat4 viewMatrix;
         glm::mat4 projectionMatrix;
         glm::mat4 modelMatrix;
-        glm::vec3 scaleVector; 
-        
-    public:
+        glm::vec3 scaleVector;
 
+    public:
         std::vector<Vertex> vertices;
         std::vector<TextureCoord> texCoords;
         std::vector<Normal> normals;
@@ -52,7 +59,6 @@ namespace objLoader {
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
         void Render(glm::vec3 position, glm::vec3 orientation);
-        void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Funçao para as matrizes
+        void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Função para as matrizes
     };
 }
-

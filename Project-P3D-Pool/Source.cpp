@@ -42,6 +42,8 @@ glm::vec3 BallPositions[] = {
     glm::vec3(0.8f, 0.1f, -0.25f)
 };
 
+
+
 //variaveis para controlar a rotação do objeto
 glm::vec2 clickPos;
 glm::vec2 prevClickPos;
@@ -94,7 +96,8 @@ void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos) {
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
-        rotationAngles.y += xoffset;
+        // Invertendo a direção da rotação quando o mouse é movido para a esquerda
+        rotationAngles.y -= xoffset; 
         rotationAngles.x += yoffset;
     }
     else {
@@ -102,6 +105,7 @@ void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos) {
         lastY = ypos;
     }
 }
+
 
 //Função callback para o zoom do rato
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
@@ -171,6 +175,9 @@ int main(void) {
     // Usa o programa das bolas para a renderização
     glUseProgram(shaderProgram);
 
+    // Fonte de luz ambiente global
+    
+
     //Habilita o teste de profundidade
     glEnable(GL_DEPTH_TEST);
 
@@ -224,6 +231,38 @@ int main(void) {
     table.Load("PoolBalls/Table", 16, shaderProgram);
     table.Install();
 
+
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(0.1, 0.1, 0.1)));
+
+    // Fonte de luz direcional
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.direction"), 1, glm::value_ptr(glm::vec3(1.0, 0.0, 0.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.2, 0.2, 0.2)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+
+    // Fonte de luz pontual #1
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].position"), 1, glm::value_ptr(glm::vec3(0.0, 0.0, 5.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].ambient"), 1, glm::value_ptr(glm::vec3(0.1, 0.1, 0.1)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].constant"), 1.0f);
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].linear"), 0.06f);
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[0].quadratic"), 0.02f);
+
+    // Fonte de luz pontual #2
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].position"), 1, glm::value_ptr(glm::vec3(-2.0, 2.0, 5.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].ambient"), 1, glm::value_ptr(glm::vec3(0.1, 0.1, 0.1)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].constant"), 1.0f);
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].linear"), 0.06f);
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].quadratic"), 0.02f);
+
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.emissive"), 1, glm::value_ptr(glm::vec3(0.0, 0.0, 0.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
+    glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "material.shininess"), 12.0f);
     //Matriz projeção
     glm::mat4 projection = glm::mat4(1.0f);
     //Matriz visualização
@@ -259,8 +298,6 @@ int main(void) {
         // Dizer que programa usar (usamos o programa das bolas)
         glUseProgram(shaderProgram);
 
-        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
         // Multiplicar a matriz view pela matriz de zoom
         view = view * matrizZoom;
 
@@ -271,6 +308,7 @@ int main(void) {
 
         // Definir as matrizes de model, view e projection para a mesa
         table.SetMatrices(view, projection, tableModel, tabbleScale);
+        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
         //Definir as matrizes de model, view e projection para as bolas
         ball1.SetMatrices(view, projection, model, scale);

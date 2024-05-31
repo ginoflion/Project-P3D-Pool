@@ -18,6 +18,7 @@
 
 namespace objLoader {
     std::string mtlFilename;
+    
 
     void Object::Load(const std::string& filename, GLuint textureIndex, GLuint shaderprogram) {
         this->ShaderProgram = shaderprogram;
@@ -100,6 +101,7 @@ namespace objLoader {
     void Object::ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
         std::string line;
+        Material material;
 
         if (!file) {
             std::cerr << "Cannot open MTL file: " << filename << std::endl;
@@ -112,25 +114,20 @@ namespace objLoader {
             iss >> prefix;
 
             if (prefix == "Ka") {
-                glm::vec3 ambientColor;
-                iss >> ambientColor.r >> ambientColor.g >> ambientColor.b;
+                iss >> material.ambient.r >> material.ambient.g >> material.ambient.b;
             }
             else if (prefix == "Kd") {
-                glm::vec3 diffuseColor;
-                iss >> diffuseColor.r >> diffuseColor.g >> diffuseColor.b;
+                iss >> material.diffuse.r >> material.diffuse.g >> material.diffuse.b;
             }
             else if (prefix == "Ks") {
-                glm::vec3 specularColor;
-                iss >> specularColor.r >> specularColor.g >> specularColor.b;
+                iss >> material.specular.r >> material.specular.g >> material.specular.b;
             }
             else if (prefix == "Ns") {
-                float shininess;
-                iss >> shininess;
+                iss >> material.shininess;
             }
             else if (prefix == "map_Kd") {
-                std::string textureFilename;
-                iss >> textureFilename;
-                LoadTexture("PoolBalls/" + textureFilename);
+                iss >> material.textureFilename;
+                LoadTexture("PoolBalls/" + material.textureFilename);
             }
         }
     }
@@ -164,7 +161,8 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    void objLoader::Object::Render(glm::vec3 position, glm::vec3 orientation) {
+    void Object::Render(glm::vec3 position, glm::vec3 orientation) {
+
         glBindVertexArray(VAO);
 
         glm::mat4 Model = modelMatrix;
@@ -172,27 +170,40 @@ namespace objLoader {
         Model = glm::rotate(Model, glm::radians(orientation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         Model = glm::rotate(Model, glm::radians(orientation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        Model = glm::scale(Model, scaleVector); // Apply scaling
+        Model = glm::scale(Model, scaleVector);
+        
+        GLint viewId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "View");
+        glProgramUniformMatrix4fv(ShaderProgram, viewId, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
-        GLint viewId = glGetUniformLocation(ShaderProgram, "View");
-        glUniformMatrix4fv(viewId, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+        GLint projectionId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "Projection");
+        glProgramUniformMatrix4fv(ShaderProgram, projectionId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-        GLint projectionId = glGetUniformLocation(ShaderProgram, "Projection");
-        glUniformMatrix4fv(projectionId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+        GLint modelId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "Model");
+        glProgramUniformMatrix4fv(ShaderProgram, modelId, 1, GL_FALSE, glm::value_ptr(Model));
 
-        GLint modelId = glGetUniformLocation(ShaderProgram, "Model");
-        glUniformMatrix4fv(modelId, 1, GL_FALSE, glm::value_ptr(Model));
+        glm::mat4 modelView = viewMatrix * Model;
+
+        GLint modelViewId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "ModelView");
+        glProgramUniformMatrix4fv(ShaderProgram, modelViewId, 1, GL_FALSE, glm::value_ptr(modelView));
+
+        glm::mat3 normalMatrix = glm::inverseTranspose(glm::mat3(modelView));
+
+        GLint normalMatrixId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "NormalMatrix");
+        glProgramUniformMatrix4fv(ShaderProgram, normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureIndex);
         glUniform1i(glGetUniformLocation(ShaderProgram, "TexSampler"), 0);
-
+        glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.emissive"), 1, glm::value_ptr(glm::vec3(0.5, 0.5, 0.5)));
+        glProgramUniform3fv(ShaderProgram, glGetUniformLocation(ShaderProgram, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(0.8, 0.8, 0.8)));
+        
+        glBindTexture(GL_TEXTURE_2D, textureIndex);
         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
         glBindVertexArray(0);
     }
 
-    void objLoader::Object::SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
+    void Object::SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         this->viewMatrix = view;
         this->projectionMatrix = projection;
         this->modelMatrix = model;
