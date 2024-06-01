@@ -26,21 +26,21 @@ GLfloat ZOOM = 5.0f;
 
 //Posições das bolas
 glm::vec3 BallPositions[] = {
-    glm::vec3(-0.7f, 0.15f, 0.3f),
-    glm::vec3(-0.6f, 0.15f, -0.4f),
-    glm::vec3(-0.5f, 0.15f, 0.2f),
-    glm::vec3(-0.4f, 0.15f, 0.5f),
-    glm::vec3(-0.3f, 0.15f, -0.3f),
-    glm::vec3(-0.2f, 0.15f, 0.1f),
-    glm::vec3(-0.1f, 0.15f, -0.2f),
-    glm::vec3(0.0f, 0.15f, 0.4f),
-    glm::vec3(0.1f, 0.15f, -0.1f),
-    glm::vec3(0.2f, 0.15f, 0.0f),
-    glm::vec3(0.3f, 0.15f, 0.3f),
-    glm::vec3(0.4f, 0.15f, -0.5f),
-    glm::vec3(0.5f, 0.15f, 0.2f),
-    glm::vec3(0.6f, 0.15f, -0.4f),
-    glm::vec3(0.7f, 0.15f, 0.1f)
+    glm::vec3(-0.7f, 0.15f, 0.3f), //0
+    glm::vec3(-0.6f, 0.15f, -0.4f),//1
+    glm::vec3(-0.5f, 0.15f, 0.2f), //2
+    glm::vec3(-0.4f, 0.15f, 0.5f), //3
+    glm::vec3(-0.3f, 0.15f, -0.3f),//4
+    glm::vec3(-0.2f, 0.15f, 0.1f), //5
+    glm::vec3(-0.1f, 0.15f, -0.2f),//6
+    glm::vec3(0.0f, 0.15f, 0.9f),  //7
+    glm::vec3(0.1f, 0.15f, -0.1f), //8
+    glm::vec3(0.2f, 0.15f, 0.0f),  //9
+    glm::vec3(0.3f, 0.15f, 0.3f),  //10
+    glm::vec3(0.4f, 0.15f, -0.5f), //11
+    glm::vec3(0.5f, 0.15f, 0.2f),  //12
+    glm::vec3(0.6f, 0.15f, -0.4f), //13
+    glm::vec3(0.7f, 0.15f, 0.1f)   //14
 };
 
 //variaveis para controlar a rotação do objeto
