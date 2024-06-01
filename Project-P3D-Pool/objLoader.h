@@ -16,6 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp> 
 
+
 namespace objLoader {
     class Object {
         struct Vertex {
@@ -39,7 +40,7 @@ namespace objLoader {
         };
 
     private:
-        Material material; // Adicionando a variável material
+        Material material; 
         GLuint ShaderProgram;
         GLuint textureIndex;
         GLuint VAO, VBOvertices, VBOtexCoords, VBOnormals;
@@ -59,7 +60,7 @@ namespace objLoader {
         void ReadMTL(const std::string& filename);
         void LoadTexture(const std::string& filename);
         void Render(glm::vec3 position, glm::vec3 orientation);
-        void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Função para as matrizes
+        void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); 
         void SetShader(GLuint textureIndex, GLuint shaderprogram);
 
     };

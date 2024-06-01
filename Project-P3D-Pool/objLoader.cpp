@@ -18,11 +18,9 @@
 
 namespace objLoader {
     std::string mtlFilename;
-    
 
+    //Carregamento e leitura dos ficheiros.obj
     void Object::Load(const std::string obj_model_filepath) {
-        
-
         std::ifstream file(obj_model_filepath + ".obj");
         if (!file) {
             std::cerr << "Cannot open OBJ file: " << obj_model_filepath << std::endl;
@@ -72,6 +70,7 @@ namespace objLoader {
         }
     }
 
+    //Configuração dos buffers para envio dos dados para o GPU
     void Object::Install() {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
@@ -85,7 +84,7 @@ namespace objLoader {
         glGenBuffers(1, &VBOtexCoords);
         glBindBuffer(GL_ARRAY_BUFFER, VBOtexCoords);
         glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(TextureCoord), texCoords.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); // Certifique-se de que location = 2
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0); 
         glEnableVertexAttribArray(2);
 
         glGenBuffers(1, &VBOnormals);
@@ -97,6 +96,7 @@ namespace objLoader {
         glBindVertexArray(0);
     }
 
+    //Leitura e carregamento dos ficheiros .mtl
     void Object::ReadMTL(const std::string& filename) {
         std::ifstream file(filename);
         std::string line;
@@ -130,6 +130,7 @@ namespace objLoader {
         }
     }
 
+    //Carregamento das texturas
     void Object::LoadTexture(const std::string& filename) {
         glGenTextures(1, &textureIndex);
         glBindTexture(GL_TEXTURE_2D, textureIndex);
@@ -159,6 +160,7 @@ namespace objLoader {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
+    //Renderização do objeto e carregamento dos materiais para o shader.
     void Object::Render(glm::vec3 position, glm::vec3 orientation) {
 
         glBindVertexArray(VAO);
@@ -208,6 +210,7 @@ namespace objLoader {
         glBindVertexArray(0);
     }
 
+    
     void Object::SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         this->viewMatrix = view;
         this->projectionMatrix = projection;

@@ -24,6 +24,7 @@ GLuint VAO, VBO;
 //Variável para controlar o zoom
 GLfloat ZOOM = 5.0f;
 
+//Posições das bolas
 glm::vec3 BallPositions[] = {
     glm::vec3(-0.7f, 0.15f, 0.3f),
     glm::vec3(-0.6f, 0.15f, -0.4f),
@@ -56,8 +57,6 @@ bool isMousePressed = false;
 
 bool animateBall = false;
 glm::vec3 ballVelocity(0.0005f, 0.0f, 0.0f); // Velocidade inicial da bola
-//glm::vec3 ballRotation(0.0f, 0.0f, 1.0f); // Rotação da bola
-//float ballRotationSpeed = 10.0f; // Velocidade de rotação da bola
 
 // Função de callback para teclado
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -82,12 +81,8 @@ void mouseClickCallback(GLFWwindow* window, int button, int action, int mods)
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
     {
         // Zera os ângulos de rotação
-        rotationAngles.x = 0.0f;
         rotationAngles.y = 0.0f;
     }
-
-    // Aplica a rotação no modelo
-    model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 
@@ -96,16 +91,13 @@ void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos)
 {
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
+        //Movimento do mouse
         prevClickPos = clickPos;
         clickPos = glm::vec2(xpos, ypos);
-
-        // Calcula a diferença entre as posições atuais do clique e as posições anteriores do clique
         glm::vec2 clickDelta = clickPos - prevClickPos;
-
-        // Sensibilidade de rotação (quanto cada pixel de movimento do mouse afeta a rotação)
-        const float sensitivity = 0.004f;
-
-        // Atualiza o ângulo de rotação ao longo do eixo Y com base no movimento horizontal do mouse
+        //Sensibilidade
+        const float sensitivity = 0.0004f;
+        //Atualização do ângulo de rotação
         rotationAngles.y += clickDelta.x * sensitivity;
     }
 }
@@ -116,15 +108,11 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 
     // Se faz zoom in
     if (yoffset == 1) {
-
-        // Incremento no zoom, varia com a distância da câmara
         ZOOM += fabs(ZOOM) * 0.1f;
     }
 
-    // Senão, se faz zoom out
+    // Se faz zoom out
     else if (yoffset == -1) {
-
-        // Incremento no zoom, varia com a distância da câmara
         ZOOM -= fabs(ZOOM) * 0.1f;
     }
 
@@ -135,11 +123,6 @@ bool checkCollision(const glm::vec3& pos1, const glm::vec3& pos2, float radius) 
     return glm::distance(pos1, pos2) < 2 * radius;
 }
 
-// Função para verificar se a bola está fora da mesa
-bool checkTableBounds(const glm::vec3& position, float radius) {
-    return position.x + radius > 1.0f || position.x - radius < -1.0f ||
-        position.z + radius > 1.0f || position.z - radius < -1.0f;
-}
 
 int main(void) {
 
@@ -196,11 +179,10 @@ int main(void) {
     // Usa o programa das bolas para a renderização
     glUseProgram(shaderProgram);
 
-
     //Habilita o teste de profundidade
     glEnable(GL_DEPTH_TEST);
 
-    //Cria e carrega as bolas
+    //Cria e carrega as bolas e a mesa
     objLoader::Object ball1;
     ball1.SetShader(1, shaderProgram);
     ball1.Load("PoolBalls/Ball1");
@@ -267,7 +249,6 @@ int main(void) {
     table.Install();
 
 
-
     //Matriz projeção
     glm::mat4 projection = glm::mat4(1.0f);
 
@@ -290,7 +271,7 @@ int main(void) {
     view = glm::lookAt(position, target, up);
 
 
-
+    //Luz ambiente
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(5.0, 5.0, 5.0)));
 
     // Fonte de luz direcional
@@ -328,9 +309,6 @@ int main(void) {
         //Matriz de zoom
         glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
-
-
-
         //Posição da camera
         glm::vec3 position(0.0f, 10.0f, 20.0f);
 
@@ -349,12 +327,6 @@ int main(void) {
         // Atualizar a posição da bola se a animação estiver ativa
         if (animateBall) {
             BallPositions[0] += ballVelocity;
-            //ballRotation += glm::vec3(ballRotationSpeed, ballRotationSpeed, ballRotationSpeed);
-
-            // Verificar colisão com os limites da mesa
-            if (checkTableBounds(BallPositions[0], 0.05f)) {
-                animateBall = false;
-            }
 
             // Verificar colisão com outras bolas
             for (int i = 1; i < 15; ++i) {
@@ -368,14 +340,11 @@ int main(void) {
         // Definir a escala das bolas
         glm::vec3 scale = glm::vec3(0.05f, 0.05f, 0.05f);
         // Definir a escala da mesa
-        glm::vec3 tabbleScale(0.4f, 0.15f, 0.15f); // Reduz o tamanho da mesa
-
+        glm::vec3 tabbleScale(0.3f, 0.15f, 0.15f); 
+        //Aplica a rotação no modelo
         model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        // Definir as matrizes de model, view e projection para a mesa
-        table.SetMatrices(view, projection, model, tabbleScale);
-
-
-        //Definir as matrizes de model, view e projection para as bolas
+       
+        //Definir as matrizes de model, view e projection para as bolas e mesa
         ball1.SetMatrices(view, projection, model, scale);
         ball2.SetMatrices(view, projection, model, scale);
         ball3.SetMatrices(view, projection, model, scale);
@@ -391,8 +360,9 @@ int main(void) {
         ball13.SetMatrices(view, projection, model, scale);
         ball14.SetMatrices(view, projection, model, scale);
         ball15.SetMatrices(view, projection, model, scale);
+        table.SetMatrices(view, projection, model, tabbleScale);
 
-        // Desenhar as bolas com a escala definida
+        // Desenhar as bolas e mesa com a escala definida
         ball1.Render(BallPositions[0], glm::vec3(0.0f, 0.0f, 0.0f));
         ball2.Render(BallPositions[1], glm::vec3(0.0f, 0.0f, 0.0f));
         ball3.Render(BallPositions[2], glm::vec3(0.0f, 0.0f, 0.0f));
