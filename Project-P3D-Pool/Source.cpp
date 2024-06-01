@@ -56,68 +56,70 @@ glm::mat4 proj(1.0f);
 // Matriz de rotação para a mesa (90 graus ao redor do eixo Y)
 glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-// Aplicar rotação à matriz do modelo da mesa
-glm::mat4 tableModel = rotation * model;
 
 bool isMousePressed = false;
 
-// Função de callback para clique do rato
-void mouseClickCallback(GLFWwindow* window, int button, int action, int mods) {
+void mouseClickCallback(GLFWwindow* window, int button, int action, int mods)
+{
     // Verifica se o botão esquerdo do mouse foi pressionado
-    if (button == GLFW_MOUSE_BUTTON_LEFT) {
-        if (action == GLFW_PRESS) {
-            isMousePressed = true;
-        }
-        // Verifica se o botão esquerdo do mouse foi libertado
-        else if (action == GLFW_RELEASE) {
-            isMousePressed = false;
-        }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        // Obtém as coordenadas do cursor do rato
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        clickPos = glm::vec2(xpos, ypos);
+        prevClickPos = clickPos;
     }
+    // Verifica se o botão esquerdo do mouse foi libertado
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    {
+        // Zera os ângulos de rotação
+        rotationAngles.x = 0.0f;
+        rotationAngles.y = 0.0f;
+    }
+
+    // Aplica a rotação no modelo
+    model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
+
 //Funcao de callback para lidar com o movimento do rato
-void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos) {
-    static bool firstMouse = true;
-    static double lastX = 400, lastY = 400; // Posição inicial do cursor (centro da janela)
+void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        prevClickPos = clickPos;
+        clickPos = glm::vec2(xpos, ypos);
 
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+        // Calcula a diferença entre as posições atuais do clique e as posições anteriores do clique
+        glm::vec2 clickDelta = clickPos - prevClickPos;
 
-    if (isMousePressed) {
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos;
-        lastX = xpos;
-        lastY = ypos;
+        // Sensibilidade de rotação (quanto cada pixel de movimento do mouse afeta a rotação)
+        const float sensitivity = 0.004f;
 
-        const float sensitivity = 0.4f;
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
-
-        // Invertendo a direção da rotação quando o mouse é movido para a esquerda
-        rotationAngles.y -= xoffset; 
-    }
-    else {
-        lastX = xpos;
-        lastY = ypos;
+        // Atualiza o ângulo de rotação ao longo do eixo Y com base no movimento horizontal do mouse
+        rotationAngles.y += clickDelta.x * sensitivity;
     }
 }
 
 
 //Função callback para o zoom do rato
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+
     // Se faz zoom in
     if (yoffset == 1) {
+
         // Incremento no zoom, varia com a distância da câmara
         ZOOM += fabs(ZOOM) * 0.1f;
     }
+
     // Senão, se faz zoom out
     else if (yoffset == -1) {
+
         // Incremento no zoom, varia com a distância da câmara
         ZOOM -= fabs(ZOOM) * 0.1f;
     }
+
 }
 
 int main(void) {
@@ -248,13 +250,25 @@ int main(void) {
 
     //Matriz projeção
     glm::mat4 projection = glm::mat4(1.0f);
+
     //Matriz visualização
     glm::mat4 view = glm::mat4(1.0f);
+
+    //Posição da camera
+    glm::vec3 position(glm::vec3(0.0f, 10.0f, 20.0f));
+
     //Target da camera
-    glm::vec3 target(0.0f, 0.0f, 0.0f);
+    glm::vec3 target(glm::vec3(0.0f));
+
+    //Calculos para a camara
+    glm::vec3 camFront = position - target;
+    glm::vec3 camRight = glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 up = -glm::cross(camFront, camRight);
 
     //Definicao das matrizes
     projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
+    view = glm::lookAt(position, target, up);
+
 
 
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(5.0, 5.0, 5.0)));
@@ -294,6 +308,9 @@ int main(void) {
 		//Matriz de zoom
         glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
+
+
+
         //Posição da camera
         glm::vec3 position(0.0f, 10.0f, 20.0f);
 
@@ -314,9 +331,10 @@ int main(void) {
         // Definir a escala da mesa
         glm::vec3 tabbleScale(0.3f, 0.1f, 0.25f); // Reduz o tamanho da mesa
 
+        model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
         // Definir as matrizes de model, view e projection para a mesa
-        table.SetMatrices(view, projection, tableModel, tabbleScale);
-        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        table.SetMatrices(view, projection, model, tabbleScale);
+
 
         //Definir as matrizes de model, view e projection para as bolas
         ball1.SetMatrices(view, projection, model, scale);
@@ -351,6 +369,8 @@ int main(void) {
         ball13.Render(BallPositions[12], glm::vec3(0.0f, 0.0f, 0.0f));
         ball14.Render(BallPositions[13], glm::vec3(0.0f, 0.0f, 0.0f));
         ball15.Render(BallPositions[14], glm::vec3(0.0f, 0.0f, 0.0f));
+
+        table.Render(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
         glfwSwapBuffers(window);
         // Dizer ao glfw para procesar todos os eventos como a janela aparecer , mudar de tamanho , input etc , senão a janela fica num estado sem resposta
