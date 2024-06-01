@@ -19,27 +19,27 @@
 #include "objLoader.h"
 #include "shaderLoader.h"
 
-GLuint VAO, VBO, EBO;
+GLuint VAO, VBO;
 
 //Variável para controlar o zoom
 GLfloat ZOOM = 5.0f;
 
 glm::vec3 BallPositions[] = {
-    glm::vec3(-0.5f, 0.1f, 0.2f),
-    glm::vec3(-0.4f, 0.1f, 0.1f),
-    glm::vec3(-0.2f, 0.1f, -0.3f),
-    glm::vec3(-0.1f, 0.1f, 0.4f),
-    glm::vec3(-0.8f, 0.1f, 0.3f),
-    glm::vec3(-0.7f, 0.1f, -0.1f),
-    glm::vec3(-0.6f, 0.1f, 0.35f),
-    glm::vec3(0.7f, 0.1f, -0.35f),
-    glm::vec3(0.2f, 0.1f, 0.2f),
-    glm::vec3(0.1f, 0.1f, 0.0f),
-    glm::vec3(0.3f, 0.1f, -0.2f),
-    glm::vec3(0.4f, 0.1f, 0.1f),
-    glm::vec3(0.5f, 0.1f, -0.15f),
-    glm::vec3(0.6f, 0.1f, 0.25f),
-    glm::vec3(0.8f, 0.1f, -0.25f)
+    glm::vec3(-0.5f, 0.15f, 0.2f),
+    glm::vec3(-0.4f, 0.15f, 0.1f),
+    glm::vec3(-0.2f, 0.15f, -0.3f),
+    glm::vec3(-0.1f, 0.15f, 0.4f),
+    glm::vec3(-0.8f, 0.15f, 0.3f),
+    glm::vec3(-0.7f, 0.15f, -0.1f),
+    glm::vec3(-0.6f, 0.15f, 0.35f),
+    glm::vec3(0.7f, 0.15f, -0.35f),
+    glm::vec3(0.2f, 0.15f, 0.2f),
+    glm::vec3(0.1f, 0.15f, 0.0f),
+    glm::vec3(0.3f, 0.15f, -0.2f),
+    glm::vec3(0.4f, 0.15f, 0.1f),
+    glm::vec3(0.5f, 0.15f, -0.15f),
+    glm::vec3(0.6f, 0.15f, 0.25f),
+    glm::vec3(0.8f, 0.15f, -0.25f)
 };
 
 
@@ -52,9 +52,6 @@ glm::vec3 rotationAngles(0.0f, 0.0f, 0.0f);
 //matrizes de modelação e projeção
 glm::mat4 model(1.0f);
 glm::mat4 proj(1.0f);
-
-// Matriz de rotação para a mesa (90 graus ao redor do eixo Y)
-glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 
 bool isMousePressed = false;
@@ -296,7 +293,7 @@ int main(void) {
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].constant"), 1.0f);
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].linear"), 0.06f);
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].quadratic"), 0.02f);
-    
+
 
 
     while (!glfwWindowShouldClose(window)) {
@@ -305,7 +302,7 @@ int main(void) {
         // Limpar buffer de cor e profundidade
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Matriz de zoom
+        //Matriz de zoom
         glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
 
@@ -317,7 +314,7 @@ int main(void) {
         //Definicao das matrizes
         view = glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		// Dizer que VAO usar
+        // Dizer que VAO usar
         glBindVertexArray(VAO);
 
         // Dizer que programa usar (usamos o programa das bolas)
@@ -329,7 +326,7 @@ int main(void) {
         // Definir a escala das bolas
         glm::vec3 scale = glm::vec3(0.05f, 0.05f, 0.05f);
         // Definir a escala da mesa
-        glm::vec3 tabbleScale(0.3f, 0.1f, 0.25f); // Reduz o tamanho da mesa
+        glm::vec3 tabbleScale(0.3f, 0.15f, 0.15f); // Reduz o tamanho da mesa
 
         model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
         // Definir as matrizes de model, view e projection para a mesa
@@ -338,7 +335,7 @@ int main(void) {
 
         //Definir as matrizes de model, view e projection para as bolas
         ball1.SetMatrices(view, projection, model, scale);
-		ball2.SetMatrices(view, projection, model, scale);
+        ball2.SetMatrices(view, projection, model, scale);
         ball3.SetMatrices(view, projection, model, scale);
         ball4.SetMatrices(view, projection, model, scale);
         ball5.SetMatrices(view, projection, model, scale);
@@ -350,7 +347,7 @@ int main(void) {
         ball11.SetMatrices(view, projection, model, scale);
         ball12.SetMatrices(view, projection, model, scale);
         ball13.SetMatrices(view, projection, model, scale);
-        ball14.SetMatrices(view, projection, model, scale); 
+        ball14.SetMatrices(view, projection, model, scale);
         ball15.SetMatrices(view, projection, model, scale);
 
         // Desenhar as bolas com a escala definida
@@ -380,7 +377,6 @@ int main(void) {
     //Apaga o VAO,VBO,EBO e o programa shader
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 
     //Destruir a janela
