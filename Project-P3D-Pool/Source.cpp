@@ -25,24 +25,22 @@ GLuint VAO, VBO;
 GLfloat ZOOM = 5.0f;
 
 glm::vec3 BallPositions[] = {
+    glm::vec3(-0.7f, 0.15f, 0.3f),
+    glm::vec3(-0.6f, 0.15f, -0.4f),
     glm::vec3(-0.5f, 0.15f, 0.2f),
-    glm::vec3(-0.4f, 0.15f, 0.1f),
-    glm::vec3(-0.2f, 0.15f, -0.3f),
-    glm::vec3(-0.1f, 0.15f, 0.4f),
-    glm::vec3(-0.8f, 0.15f, 0.3f),
-    glm::vec3(-0.7f, 0.15f, -0.1f),
-    glm::vec3(-0.6f, 0.15f, 0.35f),
-    glm::vec3(0.7f, 0.15f, -0.35f),
-    glm::vec3(0.2f, 0.15f, 0.2f),
-    glm::vec3(0.1f, 0.15f, 0.0f),
-    glm::vec3(0.3f, 0.15f, -0.2f),
-    glm::vec3(0.4f, 0.15f, 0.1f),
-    glm::vec3(0.5f, 0.15f, -0.15f),
-    glm::vec3(0.6f, 0.15f, 0.25f),
-    glm::vec3(0.8f, 0.15f, -0.25f)
+    glm::vec3(-0.4f, 0.15f, 0.5f),
+    glm::vec3(-0.3f, 0.15f, -0.3f),
+    glm::vec3(-0.2f, 0.15f, 0.1f),
+    glm::vec3(-0.1f, 0.15f, -0.2f),
+    glm::vec3(0.0f, 0.15f, 0.4f),
+    glm::vec3(0.1f, 0.15f, -0.1f),
+    glm::vec3(0.2f, 0.15f, 0.0f),
+    glm::vec3(0.3f, 0.15f, 0.3f),
+    glm::vec3(0.4f, 0.15f, -0.5f),
+    glm::vec3(0.5f, 0.15f, 0.2f),
+    glm::vec3(0.6f, 0.15f, -0.4f),
+    glm::vec3(0.7f, 0.15f, 0.1f)
 };
-
-
 
 //variaveis para controlar a rotação do objeto
 glm::vec2 clickPos;
@@ -56,6 +54,19 @@ glm::mat4 proj(1.0f);
 
 bool isMousePressed = false;
 
+bool animateBall = false;
+glm::vec3 ballVelocity(0.0005f, 0.0f, 0.0f); // Velocidade inicial da bola
+//glm::vec3 ballRotation(0.0f, 0.0f, 1.0f); // Rotação da bola
+//float ballRotationSpeed = 10.0f; // Velocidade de rotação da bola
+
+// Função de callback para teclado
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+        animateBall = !animateBall; // Inicia ou para a animação quando a tecla "Espaço" é pressionada
+    }
+}
+
+// Função de callback para clique do rato
 void mouseClickCallback(GLFWwindow* window, int button, int action, int mods)
 {
     // Verifica se o botão esquerdo do mouse foi pressionado
@@ -119,6 +130,17 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 
 }
 
+// Função para verificar colisões entre as bolas
+bool checkCollision(const glm::vec3& pos1, const glm::vec3& pos2, float radius) {
+    return glm::distance(pos1, pos2) < 2 * radius;
+}
+
+// Função para verificar se a bola está fora da mesa
+bool checkTableBounds(const glm::vec3& position, float radius) {
+    return position.x + radius > 1.0f || position.x - radius < -1.0f ||
+        position.z + radius > 1.0f || position.z - radius < -1.0f;
+}
+
 int main(void) {
 
     //Inicializar glfw para criar uma janela
@@ -147,6 +169,7 @@ int main(void) {
     glfwSetScrollCallback(window, scrollCallback);
     glfwSetMouseButtonCallback(window, mouseClickCallback);
     glfwSetCursorPosCallback(window, mouseMovementCallback);
+    glfwSetKeyCallback(window, keyCallback);
 
     //Dizer ao Opengl para limpar a cor do buffer e dar-lhe outra
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -323,10 +346,29 @@ int main(void) {
         // Multiplicar a matriz view pela matriz de zoom
         view = view * matrizZoom;
 
+        // Atualizar a posição da bola se a animação estiver ativa
+        if (animateBall) {
+            BallPositions[0] += ballVelocity;
+            //ballRotation += glm::vec3(ballRotationSpeed, ballRotationSpeed, ballRotationSpeed);
+
+            // Verificar colisão com os limites da mesa
+            if (checkTableBounds(BallPositions[0], 0.05f)) {
+                animateBall = false;
+            }
+
+            // Verificar colisão com outras bolas
+            for (int i = 1; i < 15; ++i) {
+                if (checkCollision(BallPositions[0], BallPositions[i], 0.05f)) {
+                    animateBall = false;
+                    break;
+                }
+            }
+        }
+
         // Definir a escala das bolas
         glm::vec3 scale = glm::vec3(0.05f, 0.05f, 0.05f);
         // Definir a escala da mesa
-        glm::vec3 tabbleScale(0.3f, 0.15f, 0.15f); // Reduz o tamanho da mesa
+        glm::vec3 tabbleScale(0.4f, 0.15f, 0.15f); // Reduz o tamanho da mesa
 
         model = glm::rotate(model, glm::radians(rotationAngles.y), glm::vec3(0.0f, 1.0f, 0.0f));
         // Definir as matrizes de model, view e projection para a mesa
