@@ -4,7 +4,7 @@ uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 ModelView;		// View * Model
 
-uniform samplerCube cubeMap;
+uniform sampler2D TexSampler;
 
 // Estrutura da fonte de luz ambiente global
 struct AmbientLight {
@@ -70,7 +70,7 @@ vec3 diffuseColor;
 
 in vec3 vPositionEyeSpace;
 in vec3 vNormalEyeSpace;
-in vec3 textureVector;
+in vec2 textureCoord;
 
 layout (location = 0) out vec4 fColor; // Cor final do fragmento
 
@@ -81,46 +81,27 @@ vec4 calcSpotLight(SpotLight light, out vec4 ambient);
 
 void main()
 {
-	// Cor do Material
-	// Se a textura não for nula, então a cor do material é a cor da textura.
-	//diffuseColor = texture(cubeMap, textureVector).rgb;
-	// Senão
-	diffuseColor = material.diffuse;
+    vec4 ambient;
+    vec4 light[4];
+    vec4 ambientTmp;
+    ambient = calcAmbientLight(ambientLight);
+    light[0] = calcDirectionalLight(directionalLight, ambientTmp);
+    ambient += ambientTmp;
+    for(int i = 0; i < 2; i++) {
+        light[i+1] = calcPointLight(pointLight[i], ambientTmp);
+        ambient += ambientTmp;
+    }
+    light[3] = calcSpotLight(spotLight, ambientTmp);
+    ambient += ambientTmp;
 
-	// Cálculo da componente emissiva do material.
-	vec4 emissive = vec4(material.emissive, 1.0);
+    vec3 color = texture(TexSampler, textureCoord).rgb;
+    vec3 finalColor = color * (ambient + light[0] + light[1] + light[2] + light[3]).rgb;
 
-	// Luz Ambiente Global
-	vec4 ambient;
-
-	// Cálculo do efeito da iluminação no fragmento.
-	vec4 light[4];
-	vec4 ambientTmp;
-	// Contribuição da fonte de luz ambiente
-	ambient = calcAmbientLight(ambientLight);
-	// Contribuição da fonte de luz direcional
-	light[0] = calcDirectionalLight(directionalLight, ambientTmp);
-	ambient += ambientTmp;
-	// Contribuição de cada fonte de luz Pontual
-	for(int i=0; i<2; i++) {
-		light[i+1] = calcPointLight(pointLight[i], ambientTmp);
-		ambient += ambientTmp;
-	}
-	// Contribuição da fonte de luz cónica
-	light[3] = calcSpotLight(spotLight, ambientTmp);
-	ambient += ambientTmp;
-
-	// Cálculo da cor final do fragmento.
-	// Com CubeMap
-	//fColor = emissive + (ambient/4) + light[0] + light[1] + light[2] + light[3];
-	// Com cor de fragmento
-	fColor = emissive + (ambient/4) + light[0] + light[1] + light[2] + light[3];
+    fColor = vec4(finalColor, 1.0);
 }
 
 vec4 calcAmbientLight(AmbientLight light) {
-	// Cálculo da contribuição da fonte de luz ambiente global, para a cor do objeto.
-	vec4 ambient = vec4(material.ambient * light.ambient, 1.0);
-	return ambient;
+    return vec4(material.ambient * light.ambient, 1.0);
 }
 
 vec4 calcDirectionalLight(DirectionalLight light, out vec4 ambient) {

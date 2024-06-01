@@ -61,5 +61,6 @@ namespace objLoader {
         void Render(glm::vec3 position, glm::vec3 orientation);
         void SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale); // Função para as matrizes
         void SetShader(GLuint textureIndex, GLuint shaderprogram);
+
     };
 }

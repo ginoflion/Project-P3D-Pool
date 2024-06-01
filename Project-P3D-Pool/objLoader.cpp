@@ -189,11 +189,13 @@ namespace objLoader {
         GLint normalMatrixId = glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "NormalMatrix");
         glProgramUniformMatrix4fv(ShaderProgram, normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
-
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.ambient"), 1, glm::value_ptr(material.ambient));
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.diffuse"), 1, glm::value_ptr(material.diffuse));
         glProgramUniform3fv(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.specular"), 1, glm::value_ptr(material.specular));
         glProgramUniform1f(ShaderProgram, glGetProgramResourceLocation(ShaderProgram, GL_UNIFORM, "material.shininess"), material.shininess);
+        
+
+        
 
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(glGetUniformLocation(ShaderProgram, "TexSampler"), 0);
@@ -217,4 +219,8 @@ namespace objLoader {
         this->ShaderProgram = shaderprogram;
         this->textureIndex = textureIndex;
     }
+
+
+   
+   
 }

@@ -98,7 +98,6 @@ void mouseMovementCallback(GLFWwindow* window, double xpos, double ypos) {
 
         // Invertendo a direção da rotação quando o mouse é movido para a esquerda
         rotationAngles.y -= xoffset; 
-        rotationAngles.x += yoffset;
     }
     else {
         lastX = xpos;
@@ -163,8 +162,8 @@ int main(void) {
 
     // Array de informações dos shaders para o programa das bolas
     ShaderInfo shaders[] = {
-        { GL_VERTEX_SHADER,   "triangles.vert" },
-        { GL_FRAGMENT_SHADER, "triangles.frag" },
+        { GL_VERTEX_SHADER,   "shaders/triangles.vert" },
+        { GL_FRAGMENT_SHADER, "shaders/triangles.frag" },
         { GL_NONE, NULL }
     };
 
@@ -175,8 +174,6 @@ int main(void) {
     // Usa o programa das bolas para a renderização
     glUseProgram(shaderProgram);
 
-    // Fonte de luz ambiente global
-    
 
     //Habilita o teste de profundidade
     glEnable(GL_DEPTH_TEST);
@@ -187,72 +184,84 @@ int main(void) {
     ball1.Load("PoolBalls/Ball1");
     ball1.Install();
     objLoader::Object ball2;
-    ball2.SetShader(1, shaderProgram);
+    ball2.SetShader(2, shaderProgram);
     ball2.Load("PoolBalls/Ball2");
     ball2.Install();
     objLoader::Object ball3;
-    ball3.SetShader(1, shaderProgram);
+    ball3.SetShader(3, shaderProgram);
     ball3.Load("PoolBalls/Ball3");
     ball3.Install();
     objLoader::Object ball4;
-    ball4.SetShader(1, shaderProgram);
+    ball4.SetShader(4, shaderProgram);
     ball4.Load("PoolBalls/Ball4");
     ball4.Install();
     objLoader::Object ball5;
-    ball5.SetShader(1, shaderProgram);
+    ball5.SetShader(5, shaderProgram);
     ball5.Load("PoolBalls/Ball5");
     ball5.Install();
     objLoader::Object ball6;
-    ball6.SetShader(1, shaderProgram);
+    ball6.SetShader(6, shaderProgram);
     ball6.Load("PoolBalls/Ball6");
     ball6.Install();
     objLoader::Object ball7;
-    ball7.SetShader(1, shaderProgram);
+    ball7.SetShader(7, shaderProgram);
     ball7.Load("PoolBalls/Ball7");
     ball7.Install();
     objLoader::Object ball8;
-    ball8.SetShader(1, shaderProgram);
+    ball8.SetShader(8, shaderProgram);
     ball8.Load("PoolBalls/Ball8");
     ball8.Install();
     objLoader::Object ball9;
-    ball9.SetShader(1, shaderProgram);
+    ball9.SetShader(9, shaderProgram);
     ball9.Load("PoolBalls/Ball9");
     ball9.Install();
     objLoader::Object ball10;
-    ball10.SetShader(1, shaderProgram);
+    ball10.SetShader(10, shaderProgram);
     ball10.Load("PoolBalls/Ball10");
     ball10.Install();
     objLoader::Object ball11;
-    ball11.SetShader(1, shaderProgram);
+    ball11.SetShader(11, shaderProgram);
     ball11.Load("PoolBalls/Ball11");
     ball11.Install();
     objLoader::Object ball12;
-    ball12.SetShader(1, shaderProgram);
+    ball12.SetShader(12, shaderProgram);
     ball12.Load("PoolBalls/Ball12");
     ball12.Install();
     objLoader::Object ball13;
-    ball13.SetShader(1, shaderProgram);
+    ball13.SetShader(13, shaderProgram);
     ball13.Load("PoolBalls/Ball13");
     ball13.Install();
     objLoader::Object ball14;
-    ball14.SetShader(1, shaderProgram);
+    ball14.SetShader(14, shaderProgram);
     ball14.Load("PoolBalls/Ball14");
     ball14.Install();
     objLoader::Object ball15;
-    ball15.SetShader(1, shaderProgram);
+    ball15.SetShader(15, shaderProgram);
     ball15.Load("PoolBalls/Ball15");
     ball15.Install();
     objLoader::Object table;
-    table.SetShader(1, shaderProgram);
+    table.SetShader(16, shaderProgram);
     table.Load("PoolBalls/Table");
     table.Install();
+
+
+
+    //Matriz projeção
+    glm::mat4 projection = glm::mat4(1.0f);
+    //Matriz visualização
+    glm::mat4 view = glm::mat4(1.0f);
+    //Target da camera
+    glm::vec3 target(0.0f, 0.0f, 0.0f);
+
+    //Definicao das matrizes
+    projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
 
 
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "ambientLight.ambient"), 1, glm::value_ptr(glm::vec3(5.0, 5.0, 5.0)));
 
     // Fonte de luz direcional
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.direction"), 1, glm::value_ptr(glm::vec3(1.0, 0.0, 0.0)));
-    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.4,0.4,0.4)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.direction"), 1, glm::value_ptr(glm::vec3(0.0, 1.0, 1.0)));
+    glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.ambient"), 1, glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.diffuse"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
     glProgramUniform3fv(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "directionalLight.specular"), 1, glm::value_ptr(glm::vec3(1.0, 1.0, 1.0)));
 
@@ -273,18 +282,8 @@ int main(void) {
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].constant"), 1.0f);
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].linear"), 0.06f);
     glProgramUniform1f(shaderProgram, glGetProgramResourceLocation(shaderProgram, GL_UNIFORM, "pointLight[1].quadratic"), 0.02f);
-
     
 
-    //Matriz projeção
-    glm::mat4 projection = glm::mat4(1.0f);
-    //Matriz visualização
-    glm::mat4 view = glm::mat4(1.0f);
-    //Target da camera
-    glm::vec3 target(0.0f, 0.0f, 0.0f);
-
-    //Definicao das matrizes
-    projection = glm::perspective(glm::radians(45.0f), (float)800 / 800, 0.1f, 100.0f);
 
     while (!glfwWindowShouldClose(window)) {
         // Define a cor de fundo para o framebuffer
@@ -295,12 +294,8 @@ int main(void) {
 		//Matriz de zoom
         glm::mat4 matrizZoom = glm::scale(glm::mat4(1.0f), glm::vec3(ZOOM));
 
-        //Calculos para a camara
-        float radius = 20.0f;
-        float camX = sin(glm::radians(rotationAngles.y)) * radius;
-        float camZ = cos(glm::radians(rotationAngles.y)) * radius;
         //Posição da camera
-        glm::vec3 position(camX, 10.0f, camZ);
+        glm::vec3 position(0.0f, 10.0f, 20.0f);
 
         //Definicao das matrizes
         view = glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
