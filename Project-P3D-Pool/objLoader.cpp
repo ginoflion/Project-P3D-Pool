@@ -210,7 +210,7 @@ namespace objLoader {
         glBindVertexArray(0);
     }
 
-    
+    //Configuração de matrizes
     void Object::SetMatrices(glm::mat4 view, glm::mat4 projection, glm::mat4 model, glm::vec3 scale) {
         this->viewMatrix = view;
         this->projectionMatrix = projection;
@@ -218,12 +218,9 @@ namespace objLoader {
         this->scaleVector = scale;
     }
 
+    //Configuração do Shader e indice das texturas
     void Object::SetShader(GLuint textureIndex, GLuint shaderprogram) {
         this->ShaderProgram = shaderprogram;
         this->textureIndex = textureIndex;
     }
-
-
-   
-   
 }
